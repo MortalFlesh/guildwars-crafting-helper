@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Authorization.fs" />
+    <Compile Include="Configuration.fs" />
+    <Compile Include="Characters.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fsharp.Data" Version="3.0.0" />
+  </ItemGroup>
+
+</Project>
