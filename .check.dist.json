@@ -1,0 +1,20 @@
+{
+    "items": [
+        {
+            "label": "Save the Queen",
+            "id": 81812,
+            "cell": "D3"
+        },
+        {
+            "label": "Gift of Blood (list of all materials)",
+            "items": [
+                { "label": "Recipe", "id": 75645 },
+                { "label": "Vial of powerfull blood", "id": 24295 },
+                { "label": "Vial of potent blood", "id": 24294 },
+                { "label": "Vial of thick blood", "id": 24293 },
+                { "label": "Vial of blood", "id": 24292 }
+            ],
+            "cell": "G4:G8"
+        }
+    ]
+}
