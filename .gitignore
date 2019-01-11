@@ -20,3 +20,4 @@ paket-files/
 # Local files
 .env
 src/ApiProvider/Authorization.fs
+src/Sheets/data/*.json

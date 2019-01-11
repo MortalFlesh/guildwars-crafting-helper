@@ -16,6 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../ApiProvider/Sheets.fsproj">
+      <Name>Sheets.fsproj</Name>
+    </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ConsoleStyle" Version="1.2.0" />
   </ItemGroup>
 
