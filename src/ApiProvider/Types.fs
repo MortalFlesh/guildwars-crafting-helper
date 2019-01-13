@@ -1,5 +1,9 @@
 namespace ApiProvider
 
+// ============================
+// Checklist
+// ============================
+
 type SingleCell = private SingleCell of string // A1
 type RangeCell = private RangeCell of string // A2:A5
 
@@ -19,9 +23,9 @@ type Cell =
     | Single of SingleCell
     | Range of RangeCell
 
-// ===========================
+// ---------------------------
 // Items
-// ===========================
+// ---------------------------
 
 type Item = {
     Label: string
@@ -46,9 +50,9 @@ module ItemOrSkipped =
         | Item item -> item |> Item.getId |> Some
         | Skipped _ -> None
 
-// ===========================
+// ---------------------------
 // Count (from inventories, bank, trading post delivery, ...)
-// ===========================
+// ---------------------------
 
 type CountableItem = {
     Item: Item
@@ -65,9 +69,9 @@ type ItemToCount =
     | Single of CountableItem
     | Many of CountableItemList
 
-// ===========================
+// ---------------------------
 // Known (recipe)
-// ===========================
+// ---------------------------
 
 type Recipe = {
     Item: Item
@@ -75,9 +79,9 @@ type Recipe = {
     Value: int
 }
 
-// ===========================
+// ---------------------------
 // Price (from trading post)
-// ===========================
+// ---------------------------
 
 type PriceableItem = {
     Item: Item
@@ -98,9 +102,9 @@ type ItemToPrice =
 module PriceableItemList =
     let getItems ({ Items = items }: PriceableItemList) = items
 
-// ===========================
+// ---------------------------
 // Currency (from wallet)
-// ===========================
+// ---------------------------
 
 type Currency = {
     Label: string
@@ -108,13 +112,29 @@ type Currency = {
     Cell: SingleCell
 }
 
-// ===========================
+// ---------------------------
 // Checklist
-// ===========================
+// ---------------------------
 
 type Checklist = {
     Count: ItemToCount list
     Known: Recipe list
     Price: ItemToPrice list
     Currency: Currency list
+}
+
+// ===========================
+// Api
+// ===========================
+
+type InventoryItem = {
+    Id: int
+    Count: int
+}
+
+type Inventory = InventoryItem list
+
+type CurrencyItem = {
+    Id: int
+    Amount: int
 }
