@@ -13,19 +13,23 @@ let tableRows data =
         |> List.map Seq.ofList
         |> Seq.ofList
 
-let showLinksForTradingPost checklistPrice =
+let collectIdsToPrice checklistPrice =
+    checklistPrice
+    |> Seq.collect (function
+        | ItemToPrice.Single item -> [item.Item.Id]
+        | ItemToPrice.Many items ->
+            items
+            |> PriceableItemList.getItems
+            |> List.choose ItemOrSkipped.getId
+    )
+    |> Seq.distinct
+    |> List.ofSeq
+
+let showLinksForTradingPost idsToPrice =
     Console.section "Prices for checklist (link to trading post)"
 
     let idsToPrice =
-        checklistPrice
-        |> Seq.collect (function
-            | ItemToPrice.Single item -> [item.Item.Id]
-            | ItemToPrice.Many items ->
-                items
-                |> PriceableItemList.getItems
-                |> List.choose ItemOrSkipped.getId
-        )
-        |> Seq.distinct
+        idsToPrice
         |> Seq.map string
         |> List.ofSeq
 
@@ -74,20 +78,65 @@ let countItem countItemsById = function
                             Item = item
                             Count = item.Id |> countItemsById
                         }
-                        |> Counted
-                    | ItemOrSkipped.Skipped item -> item |> Skipped
+                        |> CountedOrSkippedItem.Counted
+                    | ItemOrSkipped.Skipped item ->
+                        item |> CountedOrSkippedItem.Skipped
                 )
         }
         countedItemList |> ItemWithCount.Many
 
 let formatCountedItem = function
-    | Single i -> sprintf "%s: %i" i.Item.Item.Label i.Count
-    | Many l ->
+    | ItemWithCount.Single i -> sprintf "%s: %i" i.Item.Item.Label i.Count
+    | ItemWithCount.Many l ->
         l.Items
         |> List.map (fun i ->
             match i with
-            | Skipped s -> sprintf " - %s: skipped" s.Label
-            | Counted i -> sprintf " - %s: %i" i.Item.Label i.Count
+            | CountedOrSkippedItem.Skipped s -> sprintf " - %s: skipped" s.Label
+            | CountedOrSkippedItem.Counted i -> sprintf " - %s: %i" i.Item.Label i.Count
+        )
+        |> String.concat "\n"
+        |> sprintf "%s:\n%s" l.Label
+
+let fetchItemPrices ids =
+    Console.subTitlef "Fetching item prices [%i] ..." (ids |> List.length)
+
+    ids
+    |> fetchItemPrices
+
+let priceItem getPriceById = function
+    | ItemToPrice.Single singleItem ->
+        let pricedItem: PricedItem = {
+            Item = singleItem
+            Price = singleItem.Item.Id |> getPriceById
+        }
+        pricedItem |> ItemWithPrice.Single
+    | ItemToPrice.Many itemList ->
+        let pricedItemList: PricedItemList = {
+            Label = itemList.Label
+            Cell = itemList.Cell
+            Items =
+                itemList.Items
+                |> List.map (function
+                    | ItemOrSkipped.Item item ->
+                        {
+                            Item = item
+                            Price = item.Id |> getPriceById
+                        }
+                        |> PricedOrSkippedItem.Priced
+                    | ItemOrSkipped.Skipped item ->
+                        item |> PricedOrSkippedItem.Skipped
+                )
+        }
+        pricedItemList |> ItemWithPrice.Many
+
+let formatPricedItem = function
+    | ItemWithPrice.Single i -> sprintf "%s: %f" i.Item.Item.Label i.Price
+    | ItemWithPrice.Many l ->
+        l.Items
+        |> List.map (fun i ->
+            match i with
+            | PricedOrSkippedItem.Skipped s -> sprintf " - %s: skipped" s.Label
+            | PricedOrSkippedItem.Priced i -> sprintf " - %s: %f G" i.Item.Label i.Price
         )
         |> String.concat "\n"
         |> sprintf "%s:\n%s" l.Label
@@ -104,10 +153,17 @@ let main argv =
         |> getEnv
         |> parseChecklist
 
-    checklist.Price
+    let idsToPrice =
+        checklist.Price
+        |> collectIdsToPrice
+
+    idsToPrice
     |> showLinksForTradingPost
 
     let items, currencies = fetchAll ()
+    let itemPrices =
+        idsToPrice
+        |> fetchItemPrices
 
     items
     |> List.length
@@ -127,9 +183,25 @@ let main argv =
 
     let countedItems =
         checklist.Count
-        |> List.map (countItem >> formatCountedItem)
+        |> List.map countItem
 
     countedItems
+    |> List.map formatCountedItem
+    |> String.concat "\n"
+    |> printfn "%s"
+
+    Console.newLine ()
+    Console.section "Price items"
+    let getPriceById id =
+        itemPrices
+        |> Map.find id
+
+    let pricedItem =
+        checklist.Price
+        |> List.map (priceItem getPriceById)
+
+    pricedItem
+    |> List.map formatPricedItem
     |> String.concat "\n"
     |> printfn "%s"
 

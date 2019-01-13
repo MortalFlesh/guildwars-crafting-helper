@@ -1,6 +1,7 @@
 namespace ApiProvider
 
 module Api =
+    open System
     open FSharp.Data
     open Configuration
 
@@ -10,6 +11,7 @@ module Api =
     type private Materials = JsonProvider<const(BaseUrl + "/account/materials?access_token=" + ApiKey)>
     type private WalletSchema = JsonProvider<const(BaseUrl + "/account/wallet?access_token=" + ApiKey)>
     type private TradingPostDeliverySchema = JsonProvider<"schema/tradingPostDelivery.json", SampleIsList=true>
+    type private TradingPostListingSchema = JsonProvider<"schema/tradingPostListing.json">
 
     let fetchCharacters () =
         CharactersSchema.GetSamples()
@@ -55,3 +57,36 @@ module Api =
             tradingPost.Items
             |> Seq.map (fun item -> { Id = item.Id; Count = item.Count } )
         |> List.ofSeq
+
+    let fetchItemPrices (ids: int list) =
+        let route =
+            ids
+            |> List.map string
+            |> String.concat ","
+            |> sprintf "%s/commerce/listings?ids=%s" BaseUrl
+
+        route
+        |> Http.RequestString
+        |> TradingPostListingSchema.Parse
+        |> Seq.map (fun item ->
+            let averagePrice =
+                let averageBuys =
+                    item.Buys
+                    |> Seq.take 3
+                    |> List.ofSeq
+                    |> List.averageBy (fun i -> i.UnitPrice |> float)
+
+                let averageSells =
+                    item.Sells
+                    |> Seq.take 3
+                    |> List.ofSeq
+                    |> List.averageBy (fun i -> i.UnitPrice |> float)
+
+                [averageBuys; averageSells]
+                |> List.average
+                |> int
+                |> float
+                |> fun average -> average / 10000.0 // to gold 12345 -> 1.2345 G
+            (item.Id, averagePrice)
+        )
+        |> Map.ofSeq
