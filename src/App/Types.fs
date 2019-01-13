@@ -2,6 +2,10 @@ namespace GuildWarsHelper
 
 open ApiProvider
 
+// ===========================
+// Count
+// ===========================
+
 type CountedItem = {
     Item: CountableItem
     Count: int
@@ -25,3 +29,31 @@ type CountedItemList = {
 type ItemWithCount =
     | Single of CountedItem
     | Many of CountedItemList
+
+// ===========================
+// Price
+// ===========================
+
+type PricedItem = {
+    Item: PriceableItem
+    Price: float
+}
+
+type PricedListItem = {
+    Item: Item
+    Price: float
+}
+
+type PricedOrSkippedItem =
+    | Priced of PricedListItem
+    | Skipped of SkippedItem
+
+type PricedItemList = {
+    Label: string
+    Items: PricedOrSkippedItem list
+    Cell: RangeCell
+}
+
+type ItemWithPrice =
+    | Single of PricedItem
+    | Many of PricedItemList

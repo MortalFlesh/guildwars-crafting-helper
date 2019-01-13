@@ -1,0 +1,19 @@
+[
+    {
+        "id": 19684,
+        "buys": [
+            {
+                "listings": 1,
+                "unit_price": 228,
+                "quantity": 236
+            }
+        ],
+        "sells": [
+            {
+                "listings": 5,
+                "unit_price": 229,
+                "quantity": 365
+            }
+        ]
+    }
+]
