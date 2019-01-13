@@ -9,7 +9,7 @@
     <Compile Include="Types.fs" />
     <Compile Include="Configuration.fs" />
     <Compile Include="ChecklistParser.fs" />
-    <Compile Include="Characters.fs" />
+    <Compile Include="Api.fs" />
   </ItemGroup>
 
   <ItemGroup>

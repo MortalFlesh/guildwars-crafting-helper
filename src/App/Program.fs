@@ -5,8 +5,7 @@ open MF.ConsoleStyle
 open Environment
 open ApiProvider
 open ApiProvider.ChecklistParser
-open ApiProvider.Characters
-open ApiProvider
+open ApiProvider.Api
 
 let tableRows data =
         data
@@ -44,10 +43,6 @@ let main argv =
     let getEnv = getEnv envs
     let tryGetEnv = tryGetEnv envs
 
-    //fetchCharacters()
-    //|> tableRows
-    //|> Console.table ["Name"]
-
     let checklist =
         "CHECKLIST"
         |> getEnv
@@ -55,5 +50,46 @@ let main argv =
 
     checklist.Price
     |> showLinksForTradingPost
+
+    Console.subTitle "Fetching bank..."
+    let bankItems =
+        fetchBank()
+
+    Console.subTitle "Fetching inventories..."
+    let inventoryItems =
+        fetchCharacters()
+        |> List.collect fetchInventory
+
+    Console.subTitle "Fetching trading post delivery..."
+    let deliveredItems =
+        fetchTradingPostDelivery()
+
+    let items =
+        bankItems
+        @ inventoryItems
+        @ deliveredItems
+
+    bankItems
+    |> List.length
+    |> printfn "bank: %A"
+
+    inventoryItems
+    |> List.length
+    |> printfn "inventories: %A"
+
+    deliveredItems
+    |> List.length
+    |> printfn "delivered: %A"
+
+    items
+    |> List.length
+    |> printfn "All items: %A"
+
+    let currency =
+        fetchWallet()
+
+    currency
+    |> List.length
+    |> printfn "All currencies: %A"
 
     0
