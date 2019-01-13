@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Environment.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
@@ -16,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../ApiProvider/Sheets.fsproj">
+    <ProjectReference Include="../Sheets/Sheets.fsproj">
       <Name>Sheets.fsproj</Name>
     </ProjectReference>
   </ItemGroup>

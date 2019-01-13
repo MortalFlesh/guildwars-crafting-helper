@@ -4,53 +4,53 @@
         {
             "label": "Gift of Condendsed magic and might (list of all materials)",
             "items": [
-                { "label": "Recipe Gift of Blood", "id": 0 },
+                { "label": "Recipe Gift of Blood" },
                 { "label": "Vial of powerfull blood", "id": 24295 },
                 { "label": "Vial of potent blood", "id": 24294 },
                 { "label": "Vial of thick blood", "id": 24293 },
                 { "label": "Vial of blood", "id": 24292 },
 
-                { "label": "Recipe Gift of Venom", "id": 0 },
+                { "label": "Recipe Gift of Venom" },
                 { "label": "Powerful Venom Sac", "id": 24283 },
-                { "label": "Potent Venom Sac", "id": 24283 },
+                { "label": "Potent Venom Sac", "id": 24282 },
                 { "label": "Full Venom Sac", "id": 24281 },
                 { "label": "Venom Sac", "id": 24280 },
 
-                { "label": "Recipe Gift of Totems", "id": 0 },
+                { "label": "Recipe Gift of Totems" },
                 { "label": "Elaborate Totem", "id": 24300 },
                 { "label": "Intricate Totem", "id": 24299 },
-                { "label": "Engraved Totem", "id": 24298 },
-                { "label": "Totem", "id": 24297 },
+                { "label": "Engraved Totem", "id": 24363 },
+                { "label": "Totem", "id": 24298 },
 
-                { "label": "Recipe Gift of Dust", "id": 0 },
+                { "label": "Recipe Gift of Dust" },
                 { "label": "Pile of Crystaline Dust", "id": 24277 },
                 { "label": "Pile of Incandescent Dust", "id": 24276 },
                 { "label": "Pile of Luminous Dust", "id": 24275 },
                 { "label": "Pile of Radiant Dust", "id": 24274 },
 
-                { "label": "Recipe Gift of Claw", "id": 0 },
+                { "label": "Recipe Gift of Claw" },
                 { "label": "Vicious Claw", "id": 24351 },
                 { "label": "Large Claw", "id": 24350 },
                 { "label": "Sharp Claw", "id": 24349 },
                 { "label": "Claw", "id": 24348 },
 
-                { "label": "Recipe Gift of Scales", "id": 0 },
+                { "label": "Recipe Gift of Scales" },
                 { "label": "Armored Scale", "id": 24289 },
                 { "label": "Large Scale", "id": 24288 },
                 { "label": "Smooth Scale", "id": 24287 },
                 { "label": "Scale", "id": 24286 },
 
-                { "label": "Recipe Gift of Bones", "id": 0 },
+                { "label": "Recipe Gift of Bones" },
                 { "label": "Ancient Bone", "id": 24358 },
-                { "label": "Large Bone", "id": 24357 },
-                { "label": "Heavy Bone", "id": 24356 },
-                { "label": "Bone", "id": 24355 },
+                { "label": "Large Bone", "id": 24341 },
+                { "label": "Heavy Bone", "id": 24345 },
+                { "label": "Bone", "id": 24344 },
 
-                { "label": "Recipe Gift of Fangs", "id": 0 },
+                { "label": "Recipe Gift of Fangs" },
                 { "label": "Vicious Fang", "id": 24357 },
                 { "label": "Large Fang", "id": 24356 },
                 { "label": "Sharp Fang", "id": 24355 },
-                { "label": "Fang", "id":243574 }
+                { "label": "Fang", "id": 24354 }
             ],
             "cell": "H4:H43"
         },
@@ -64,14 +64,7 @@
             ],
             "cell": "D45:D46"
         },
-        {
-            "label": "Ecto + Mystic Crystal",
-            "items": [
-                { "label": "Glob of Ectoplasm", "id": 19721 },
-                { "label": "Mystic Crystal", "id": 20799 }
-            ],
-            "cell": "J47:J48"
-        },
+        { "label": "Mystic Crystal", "id": 20799, "cell": "J48" },
         {
             "label": "Gift of the Mist",
             "items": [
@@ -147,7 +140,14 @@
             "cell": "F86:F89"
         },
         { "label": "Funerary Incense", "id": 86093, "cell": "D91" },
-        { "label": "Amalgamated Gemstone", "id": 68063, "cell": "I96" }
+        {
+            "label": "Funerary Incense - parts",
+            "items": [
+                { "label": "Glob of Ectoplasm", "id": 19721 },
+                { "label": "Amalgamated Gemstone", "id": 68063 }
+            ],
+            "cell": "I96:I97"
+        }
     ],
     "known": [
         { "label": "Recipe Gift of Blood", "id": 75645, "cell": "H4", "value": 10 },
@@ -164,53 +164,53 @@
         {
             "label": "Gift of Condendsed magic and might (list of all materials)",
             "items": [
-                { "label": "skip", "id": 0 },
+                { "label": "skip" },
                 { "label": "Vial of powerfull blood", "id": 24295 },
                 { "label": "Vial of potent blood", "id": 24294 },
                 { "label": "Vial of thick blood", "id": 24293 },
                 { "label": "Vial of blood", "id": 24292 },
 
-                { "label": "skip", "id": 0 },
+                { "label": "skip" },
                 { "label": "Powerful Venom Sac", "id": 24283 },
-                { "label": "Potent Venom Sac", "id": 24283 },
+                { "label": "Potent Venom Sac", "id": 24282 },
                 { "label": "Full Venom Sac", "id": 24281 },
                 { "label": "Venom Sac", "id": 24280 },
 
-                { "label": "skip", "id": 0 },
+                { "label": "skip" },
                 { "label": "Elaborate Totem", "id": 24300 },
                 { "label": "Intricate Totem", "id": 24299 },
-                { "label": "Engraved Totem", "id": 24298 },
-                { "label": "Totem", "id": 24297 },
+                { "label": "Engraved Totem", "id": 24363 },
+                { "label": "Totem", "id": 24298 },
 
-                { "label": "skip", "id": 0 },
+                { "label": "skip" },
                 { "label": "Pile of Crystaline Dust", "id": 24277 },
                 { "label": "Pile of Incandescent Dust", "id": 24276 },
                 { "label": "Pile of Luminous Dust", "id": 24275 },
                 { "label": "Pile of Radiant Dust", "id": 24274 },
 
-                { "label": "skip", "id": 0 },
+                { "label": "skip" },
                 { "label": "Vicious Claw", "id": 24351 },
                 { "label": "Large Claw", "id": 24350 },
                 { "label": "Sharp Claw", "id": 24349 },
                 { "label": "Claw", "id": 24348 },
 
-                { "label": "skip", "id": 0 },
+                { "label": "skip" },
                 { "label": "Armored Scale", "id": 24289 },
                 { "label": "Large Scale", "id": 24288 },
                 { "label": "Smooth Scale", "id": 24287 },
                 { "label": "Scale", "id": 24286 },
 
-                { "label": "skip", "id": 0 },
+                { "label": "skip" },
                 { "label": "Ancient Bone", "id": 24358 },
-                { "label": "Large Bone", "id": 24357 },
-                { "label": "Heavy Bone", "id": 24356 },
-                { "label": "Bone", "id": 24355 },
+                { "label": "Large Bone", "id": 24341 },
+                { "label": "Heavy Bone", "id": 24345 },
+                { "label": "Bone", "id": 24344 },
 
-                { "label": "skip", "id": 0 },
+                { "label": "skip" },
                 { "label": "Vicious Fang", "id": 24357 },
                 { "label": "Large Fang", "id": 24356 },
                 { "label": "Sharp Fang", "id": 24355 },
-                { "label": "Fang", "id":243574 }
+                { "label": "Fang", "id": 24354 }
             ],
             "cell": "J4:J43"
         },
@@ -235,6 +235,14 @@
                 { "label": "Platinum Ingot", "id": 19686 }
             ],
             "cell": "H76:H79"
+        },
+        {
+            "label": "Funerary Incense - parts",
+            "items": [
+                { "label": "Glob of Ectoplasm", "id": 19721 },
+                { "label": "Amalgamated Gemstone", "id": 68063 }
+            ],
+            "cell": "J96:J97"
         }
     ],
     "currency": [
