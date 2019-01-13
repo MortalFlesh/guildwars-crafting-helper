@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <Compile Include="Environment.fs" />
+    <Compile Include="Types.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

@@ -1,6 +1,5 @@
 {
     "count": [
-        { "label": "Save the Queen", "id": 81812, "cell": "D3" },
         {
             "label": "Gift of Condendsed magic and might (list of all materials)",
             "items": [
@@ -108,16 +107,6 @@
                 { "label": "Elder Wood Log", "id": 19722 }
             ],
             "cell": "F67:F70"
-        },
-        {
-            "label": "Gift of the Raider",
-            "items": [
-                { "label": "Spirit of the Raptor", "id": 85707, "value": 100 },
-                { "label": "Spirit of the Springer", "id": 85681, "value": 100 },
-                { "label": "Spirit of the Skimmer", "id": 86115, "value": 100 },
-                { "label": "Spirit of the Jackal", "id": 86177, "value": 100 }
-            ],
-            "cell": "F76:F79"
         },
         {
             "label": "Gift of Metal",
