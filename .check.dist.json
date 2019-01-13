@@ -143,11 +143,11 @@
         { "label": "Recipe Gift of Venom", "id": 73389, "cell": "H9", "value": 10 },
         { "label": "Recipe Gift of Totems", "id": 75337, "cell": "H14", "value": 10 },
         { "label": "Recipe Gift of Dust", "id": 70646, "cell": "H19", "value": 10 },
-        { "label": "Recipe Gift of Claw", "id": 75071, "cell": "H24", "value": 10 },
+        { "label": "Recipe Gift of Claws", "id": 75071, "cell": "H24", "value": 10 },
         { "label": "Recipe Gift of Scales", "id": 76121, "cell": "H29", "value": 10 },
         { "label": "Recipe Gift of Bones", "id": 73366, "cell": "H34", "value": 10 },
-        { "label": "Recipe Gift of Fangs", "id": 75744, "cell": "H39", "value": 10 },
-        { "label": "Recipe Gift Metal", "id": 19621, "cell": "F75", "value": 10 }
+        { "label": "Recipe Gift of Fangs", "id": 74882, "cell": "H39", "value": 10 },
+        { "label": "Recipe Gift Metal", "id": 9615, "cell": "F75", "value": 10 }
     ],
     "price": [
         {
