@@ -41,7 +41,7 @@ let showLinksForTradingPost idsToPrice =
     |> List.chunkBySize 16
     |> List.iter ((String.concat ",") >> (printfn "https://www.gw2tp.com/custom-list?name=LIST_NAME&ids=%s\n"))
 
-let fetchAll () =
+let fetchAll idsToPrice =
     Console.subTitle "Fetching bank ..."
     let bankItems = fetchBank()
 
@@ -57,7 +57,15 @@ let fetchAll () =
     Console.subTitle "Fetching wallet ..."
     let currencies = fetchWallet()
 
-    (items, currencies)
+    Console.subTitle "Fetching known recipes ..."
+    let knownRecipes = fetchKnownRecipes()
+
+    Console.subTitle "Fetching item prices ..."
+    let itemPrices =
+        idsToPrice
+        |> fetchItemPrices
+
+    (items, currencies, knownRecipes, itemPrices)
 
 let countItem countItemsById = function
     | ItemToCount.Single singleItem ->
@@ -141,6 +149,12 @@ let formatPricedItem = function
         |> String.concat "\n"
         |> sprintf "%s:\n%s" l.Label
 
+let printLines format list =
+    list
+    |> List.map format
+    |> String.concat "\n"
+    |> printfn "%s"
+
 [<EntryPoint>]
 let main argv =
     Console.title "Guild Wars crafting helper"
@@ -160,10 +174,7 @@ let main argv =
     idsToPrice
     |> showLinksForTradingPost
 
-    let items, currencies = fetchAll ()
-    let itemPrices =
-        idsToPrice
-        |> fetchItemPrices
+    let items, currencies, knownRecipes, itemPrices = fetchAll idsToPrice
 
     items
     |> List.length
@@ -186,9 +197,23 @@ let main argv =
         |> List.map countItem
 
     countedItems
-    |> List.map formatCountedItem
-    |> String.concat "\n"
-    |> printfn "%s"
+    |> printLines formatCountedItem
+
+    Console.newLine ()
+    Console.section "Known recipes"
+    let recipes =
+        checklist.Known
+        |> List.map (fun recipe ->
+            let recipeId =
+                recipe.Item.Id
+                |> fetchRecipeUnlockId
+
+            if knownRecipes |> List.contains recipeId then recipe
+            else { recipe with Value = 0 }
+        )
+
+    recipes
+    |> printLines (fun r -> sprintf "%s: %i" r.Item.Label r.Value)
 
     Console.newLine ()
     Console.section "Price items"
@@ -201,8 +226,6 @@ let main argv =
         |> List.map (priceItem getPriceById)
 
     pricedItem
-    |> List.map formatPricedItem
-    |> String.concat "\n"
-    |> printfn "%s"
+    |> printLines formatPricedItem
 
     0

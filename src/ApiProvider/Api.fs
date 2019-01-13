@@ -12,6 +12,8 @@ module Api =
     type private WalletSchema = JsonProvider<const(BaseUrl + "/account/wallet?access_token=" + ApiKey)>
     type private TradingPostDeliverySchema = JsonProvider<"schema/tradingPostDelivery.json", SampleIsList=true>
     type private TradingPostListingSchema = JsonProvider<"schema/tradingPostListing.json">
+    type private KnownRecipeSchema = JsonProvider<const(BaseUrl + "/account/recipes?access_token=" + ApiKey)>
+    type private RecipeSchema = JsonProvider<"schema/recipe.json">
 
     let fetchCharacters () =
         CharactersSchema.GetSamples()
@@ -90,3 +92,18 @@ module Api =
             (item.Id, averagePrice)
         )
         |> Map.ofSeq
+
+    let fetchKnownRecipes () =
+        KnownRecipeSchema.GetSamples()
+        |> List.ofArray
+
+    let fetchRecipeUnlockId recipeId =
+        let route =
+            recipeId
+            |> sprintf "%s/items/%i" BaseUrl
+
+        route
+        |> Http.RequestString
+        |> RecipeSchema.Parse
+        |> fun recipe ->
+            recipe.Details.RecipeId
