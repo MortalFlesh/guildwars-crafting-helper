@@ -2,6 +2,12 @@ namespace GuildWarsHelper
 
 open ApiProvider
 
+type Log = {
+    Section: string -> unit
+    HighlightedMessage: string -> unit
+    Message: string -> unit
+}
+
 // ===========================
 // Count
 // ===========================
@@ -57,3 +63,15 @@ type PricedItemList = {
 type ItemWithPrice =
     | Single of PricedItem
     | Many of PricedItemList
+
+// ===========================
+// Prepared checklist
+// ===========================
+
+type PreparedChecklist = {
+    Count: ItemWithCount list
+    Known: Recipe list
+    Price: ItemWithPrice list
+    IdsToPrice: int list
+    Currency: Currency list // todo
+}
