@@ -94,5 +94,9 @@ let main argv =
     log.Section "Price items"
     checklist.Price
     |> printLines formatPricedItem
+    
+    log.Section "Wallet items"
+    checklist.Currency
+    |> printLines (fun c -> sprintf "%s: %i" c.Currency.Label c.Amount)
 
     0
