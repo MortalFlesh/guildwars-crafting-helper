@@ -9,6 +9,7 @@
     <Compile Include="Environment.fs" />
     <Compile Include="Types.fs" />
     <Compile Include="Checklist.fs" />
+    <Compile Include="Encoder.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

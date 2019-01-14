@@ -132,8 +132,8 @@
         {
             "label": "Funerary Incense - parts",
             "items": [
-                { "label": "Glob of Ectoplasm", "id": 19721 },
-                { "label": "Amalgamated Gemstone", "id": 68063 }
+                { "label": "Amalgamated Gemstone", "id": 68063 },
+                { "label": "Glob of Ectoplasm", "id": 19721 }
             ],
             "cell": "I96:I97"
         }
@@ -228,8 +228,8 @@
         {
             "label": "Funerary Incense - parts",
             "items": [
-                { "label": "Glob of Ectoplasm", "id": 19721 },
-                { "label": "Amalgamated Gemstone", "id": 68063 }
+                { "label": "Amalgamated Gemstone", "id": 68063 },
+                { "label": "Glob of Ectoplasm", "id": 19721 }
             ],
             "cell": "J96:J97"
         }

@@ -23,6 +23,11 @@ type Cell =
     | Single of SingleCell
     | Range of RangeCell
 
+module Cell =
+    let value = function
+        | Single (SingleCell cell) -> cell
+        | Range (RangeCell cell) -> cell
+
 // ---------------------------
 // Items
 // ---------------------------
