@@ -6,6 +6,8 @@ open Environment
 open ApiProvider.ChecklistParser
 open GuildWarsHelper
 open ChecklistWrapper
+open Encoder
+open Sheets.Api
 
 let tableRows data =
         data
@@ -74,6 +76,9 @@ let main argv =
         Message = Console.message
     }
 
+    let spreadsheetId = "SPREEDSHEET_ID" |> getEnv
+    let listName = "LIST_NAME" |> getEnv
+
     let checklist =
         "CHECKLIST"
         |> getEnv
@@ -94,9 +99,14 @@ let main argv =
     log.Section "Price items"
     checklist.Price
     |> printLines formatPricedItem
-    
+
     log.Section "Wallet items"
     checklist.Currency
     |> printLines (fun c -> sprintf "%s: %i" c.Currency.Label c.Amount)
+
+    log.Section "Encode data"
+    checklist
+    |> encode spreadsheetId listName
+    |> writeUpdateData (sprintf "%s/%s" Environment.CurrentDirectory "../Sheets/data/update.json")
 
     0

@@ -2,6 +2,11 @@
 
 require_once __DIR__ . "/vendor/autoload.php";
 
+printfn('');
+printfn('PHP Sheets wrapper');
+printfn('==================');
+printfn('');
+
 $sourceFile = __DIR__ . '/../data/update.json';
 if (!file_exists($sourceFile)) {
     printfn('Source data file "%s" is missing.', $sourceFile);
@@ -114,7 +119,12 @@ $write = writeValues($spreadsheetId);
 //printfn("App for %s", $name);
 //printfn(str_repeat('=', mb_strlen($name)));
 
-foreach ($data as $range => $values) {
+printfn('Sending data');
+printfn('------------');
+printfn('');
+
+foreach ($data as ['Item1' => $range, 'Item2' => $values]) {
+    printfn(' - Sending range %s ...', $range);
     $write($rangeOnList($range), $values);
 }
 
