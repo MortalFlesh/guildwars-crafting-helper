@@ -138,3 +138,6 @@ type CurrencyItem = {
     Id: int
     Amount: int
 }
+
+module CurrencyItem =
+    let getAmount { Amount = amount } = amount

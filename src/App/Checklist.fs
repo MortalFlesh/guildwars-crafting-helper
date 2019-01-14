@@ -122,7 +122,6 @@ let prepareChecklist log (checklist: Checklist): PreparedChecklist =
     |> sprintf "All currencies: %i"
     |> log.Message
 
-    log.Section "Count items"
     let countItemsById id =
         items
         |> List.filter (fun i -> i.Id = id)
@@ -152,10 +151,22 @@ let prepareChecklist log (checklist: Checklist): PreparedChecklist =
         checklist.Price
         |> List.map (priceItem getPriceById)
 
+    let currencies =
+        checklist.Currency
+        |> List.map (fun currency ->
+            {
+                Currency = currency
+                Amount =
+                    currencies
+                    |> List.find (fun c -> c.Id = currency.Id)
+                    |> CurrencyItem.getAmount
+            }
+        )
+
     {
         Count = countedItems
         Known = recipes
         Price = pricedItems
         IdsToPrice = idsToPrice
-        Currency = []
+        Currency = currencies
     }
