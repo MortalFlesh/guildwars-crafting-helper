@@ -158,8 +158,10 @@ let prepareChecklist log (checklist: Checklist): PreparedChecklist =
                 Currency = currency
                 Amount =
                     currencies
-                    |> List.find (fun c -> c.Id = currency.Id)
-                    |> CurrencyItem.getAmount
+                    |> List.tryFind (fun c -> c.Id = currency.Id)
+                    |> function
+                        | Some currency -> currency |> CurrencyItem.getAmount
+                        | None -> 0
             }
         )
 
