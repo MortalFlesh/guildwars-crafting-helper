@@ -107,6 +107,6 @@ let main argv =
     log.Section "Encode data"
     checklist
     |> encode spreadsheetId listName
-    |> writeUpdateData (sprintf "%s/%s" Environment.CurrentDirectory "../Sheets/data/update.json")
+    |> writeUpdateData (sprintf "%s/%s" Environment.CurrentDirectory "src/Sheets/data/update.json")
 
     0

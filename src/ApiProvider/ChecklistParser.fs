@@ -11,7 +11,6 @@ module ChecklistParser =
     let parseChecklist checklistName =
         let checklistData =
             checklistName
-            |> sprintf "../../%s"
             |> File.ReadAllText
             |> ChecklistSchema.Parse
 
