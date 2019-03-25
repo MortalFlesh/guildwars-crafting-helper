@@ -41,6 +41,18 @@ php src/Sheets/Wrapper/app.php
 
 # --------------------
 
+export LIST_NAME="Incinerator (legendary dagger)"
+export CHECKLIST=".check-incinerator.json"
+
+echo $LIST_NAME
+echo "=========================="
+echo
+
+dotnet src/App/bin/Release/netcoreapp2.1/App.dll
+php src/Sheets/Wrapper/app.php
+
+# --------------------
+
 export LIST_NAME="PVP armor (legendary armor)"
 export CHECKLIST=".check-pvp-armor.json"
 
