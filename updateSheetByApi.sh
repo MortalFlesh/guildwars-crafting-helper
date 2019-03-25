@@ -18,6 +18,17 @@ set -e
 
 # --------------------
 
+export LIST_NAME="Bank"
+
+echo $LIST_NAME
+echo "=========================="
+echo
+
+dotnet src/App/bin/Release/netcoreapp2.1/App.dll bank
+php src/Sheets/Wrapper/app.php
+
+# --------------------
+
 export LIST_NAME="Frostfang (legendary axe)"
 export CHECKLIST=".check-frostfang.json"
 

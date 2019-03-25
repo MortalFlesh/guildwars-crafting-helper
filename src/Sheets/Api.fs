@@ -10,8 +10,15 @@ module Api =
     let private serializePretty obj =
         JsonConvert.SerializeObject(obj, Formatting.Indented)
 
-    let writeUpdateData path updateData =
-        updateData
-        |> serialize
-        |> fun data -> (path, data)
-        |> File.WriteAllText
+    let writeUpdateData path = function
+        | UpdateData.Float data ->
+            data
+            |> serialize
+            |> fun data -> (path, data)
+            |> File.WriteAllText
+
+        | UpdateData.String data ->
+            data
+            |> serialize
+            |> fun data -> (path, data)
+            |> File.WriteAllText

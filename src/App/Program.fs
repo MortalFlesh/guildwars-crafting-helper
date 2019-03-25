@@ -8,6 +8,7 @@ open GuildWarsHelper
 open ChecklistWrapper
 open Encoder
 open Sheets.Api
+open ApiProvider
 
 let tableRows data =
         data
@@ -66,7 +67,6 @@ let main argv =
     let envs = ".env" |> getEnvs Console.error
     let getEnv = getEnv envs
     let tryGetEnv = tryGetEnv envs
-
     let log = {
         Section =
             fun section ->
@@ -79,34 +79,69 @@ let main argv =
     let spreadsheetId = "SPREEDSHEET_ID" |> getEnv
     let listName = "LIST_NAME" |> getEnv
 
-    let checklist =
-        "CHECKLIST"
-        |> getEnv
-        |> parseChecklist
-        |> prepareChecklist log
+    match argv with
+    | [| "bank" |] ->
+        log.Section "Bank inspection"
 
-    checklist.IdsToPrice
-    |> showLinksForTradingPost
+        let pricedItems =
+            Api.fetchBank ()
+            |> List.filter (fun { Count = count } -> count > 0)
+            |> List.chunkBySize 100
+            |> List.collect (fun items ->
+                let itemIds = items |> List.map (fun { Id = id } -> id)
+                let prices = itemIds |> Api.fetchItemPrices
+                let itemsInfo = itemIds |> Api.fetchItems
 
-    log.Section "Count items"
-    checklist.Count
-    |> printLines formatCountedItem
+                items
+                |> List.map (fun item ->
+                    {
+                        ItemInfo = itemsInfo.[item.Id]
+                        InventoryItem = item
+                        Price =
+                            prices
+                            |> Map.tryFind item.Id
+                            |> function
+                                | Some float -> float
+                                | _ -> 0.0
+                    }
+                )
+                |> List.filter (fun i -> i.Price > 0.0)
+            )
 
-    log.Section "Known recipes"
-    checklist.Known
-    |> printLines (fun r -> sprintf "%s: %i" r.Item.Label r.Value)
+        log.Section "Encode data"
+        pricedItems
+        |> encodeBankItems spreadsheetId listName { Letter = "A"; Number = 2 }
+        |> writeUpdateData (sprintf "%s/%s" Environment.CurrentDirectory "src/Sheets/data/update.json")
+        0
+    | _ ->
+        let checklist =
+            "CHECKLIST"
+            |> getEnv
+            |> parseChecklist
+            |> prepareChecklist log
 
-    log.Section "Price items"
-    checklist.Price
-    |> printLines formatPricedItem
+        checklist.IdsToPrice
+        |> showLinksForTradingPost
 
-    log.Section "Wallet items"
-    checklist.Currency
-    |> printLines (fun c -> sprintf "%s: %i" c.Currency.Label c.Amount)
+        log.Section "Count items"
+        checklist.Count
+        |> printLines formatCountedItem
 
-    log.Section "Encode data"
-    checklist
-    |> encode spreadsheetId listName
-    |> writeUpdateData (sprintf "%s/%s" Environment.CurrentDirectory "src/Sheets/data/update.json")
+        log.Section "Known recipes"
+        checklist.Known
+        |> printLines (fun r -> sprintf "%s: %i" r.Item.Label r.Value)
 
-    0
+        log.Section "Price items"
+        checklist.Price
+        |> printLines formatPricedItem
+
+        log.Section "Wallet items"
+        checklist.Currency
+        |> printLines (fun c -> sprintf "%s: %i" c.Currency.Label c.Amount)
+
+        log.Section "Encode data"
+        checklist
+        |> encode spreadsheetId listName
+        |> writeUpdateData (sprintf "%s/%s" Environment.CurrentDirectory "src/Sheets/data/update.json")
+
+        0
