@@ -4,6 +4,10 @@ namespace ApiProvider
 // Checklist
 // ============================
 
+type ExactCell = {
+    Letter: string
+    Number: int
+}
 type SingleCell = private SingleCell of string // A1
 type RangeCell = private RangeCell of string // A2:A5
 
@@ -27,6 +31,8 @@ module Cell =
     let value = function
         | Single (SingleCell cell) -> cell
         | Range (RangeCell cell) -> cell
+
+    let exactValue ({Letter = l; Number = n}) = sprintf "%s%i" l n
 
 // ---------------------------
 // Items
@@ -132,6 +138,11 @@ type Checklist = {
 // Api
 // ===========================
 
+type ItemInfo = {
+    Id: int
+    Name: string
+}
+
 type InventoryItem = {
     Id: int
     Count: int
@@ -146,3 +157,13 @@ type CurrencyItem = {
 
 module CurrencyItem =
     let getAmount { Amount = amount } = amount
+
+// ===========================
+// Domain
+// ===========================
+
+type PricedBankItem = {
+    ItemInfo: ItemInfo
+    InventoryItem: InventoryItem
+    Price: float
+}

@@ -1,0 +1,129 @@
+[
+    {
+        "name": "The Shining Blade",
+        "type": "Weapon",
+        "level": 80,
+        "rarity": "Legendary",
+        "vendor_value": 100000,
+        "default_skin": 7300,
+        "game_types": [
+            "Activity",
+            "Wvw",
+            "Dungeon",
+            "Pve"
+        ],
+        "flags": [
+            "HideSuffix",
+            "AccountBound",
+            "NoSalvage",
+            "NoSell",
+            "DeleteWarning",
+            "AccountBindOnUse"
+        ],
+        "restrictions": [],
+        "id": 81957,
+        "chat_link": "[&AgElQAEA]",
+        "icon": "https://render.guildwars2.com/file/DB4197185C097D04569265051654AA121F459A1D/1729769.png",
+        "details": {
+            "type": "Sword",
+            "damage_type": "Physical",
+            "min_power": 950,
+            "max_power": 1050,
+            "defense": 0,
+            "infusion_slots": [
+                {
+                    "flags": [
+                        "Infusion"
+                    ]
+                }
+            ],
+            "suffix_item_id": 24678,
+            "secondary_suffix_item_id": "",
+            "stat_choices": [
+                155,
+                161,
+                159,
+                157,
+                158,
+                160,
+                153,
+                605,
+                700,
+                616,
+                154,
+                156,
+                162,
+                686,
+                559,
+                754,
+                753,
+                799,
+                1026,
+                1067,
+                1123,
+                1140,
+                1085,
+                1153,
+                1118,
+                1131,
+                1111,
+                1109,
+                1222,
+                1344,
+                1363,
+                1364,
+                628,
+                1032,
+                1484,
+                1539
+            ]
+        }
+    },
+    {
+        "name": "Carrion Scallywag Gauntlets of the Citadel",
+        "description": "",
+        "type": "Armor",
+        "level": 71,
+        "rarity": "Exotic",
+        "vendor_value": 213,
+        "default_skin": 33,
+        "game_types": [
+            "Activity",
+            "Wvw",
+            "Dungeon",
+            "Pve"
+        ],
+        "flags": [
+            "SoulBindOnUse"
+        ],
+        "restrictions": [],
+        "id": 1337,
+        "chat_link": "[&AgE5BQAA]",
+        "icon": "https://render.guildwars2.com/file/71F39428A82C6AE7C79C6620066E0C6947FF5D72/61054.png",
+        "details": {
+            "type": "Gloves",
+            "weight_class": "Heavy",
+            "defense": 154,
+            "infusion_slots": [],
+            "infix_upgrade": {
+                "id": 160,
+                "attributes": [
+                    {
+                        "attribute": "Power",
+                        "modifier": 27
+                    },
+                    {
+                        "attribute": "Vitality",
+                        "modifier": 27
+                    },
+                    {
+                        "attribute": "ConditionDamage",
+                        "modifier": 38
+                    }
+                ]
+            },
+            "suffix_item_id": 24741,
+            "secondary_suffix_item_id": ""
+        }
+    }
+]

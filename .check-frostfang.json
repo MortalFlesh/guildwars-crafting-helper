@@ -1,0 +1,109 @@
+{
+    "count": [
+        {
+            "label": "Gift of Fortune (list of all materials)",
+            "items": [
+                { "label": "Vicious Fang", "id": 24357 },
+                { "label": "Armored Scale", "id": 24289 },
+                { "label": "Vicious Claw", "id": 24351 },
+                { "label": "Ancient Bone", "id": 24358 },
+                { "label": "Vial of powerfull blood", "id": 24295 },
+                { "label": "Powerful Venom Sac", "id": 24283 },
+                { "label": "Elaborate Totem", "id": 24300 },
+                { "label": "Pile of Crystaline Dust", "id": 24277 }
+            ],
+            "cell": "H6:H13"
+        },
+        { "label": "Obsidian Shard", "id": 19925, "cell": "O10" },
+        {
+            "label": "Mystic Clover + Ecto",
+            "items": [
+                { "label": "Mystic Clover", "id": 19675 },
+                { "label": "Glob of Ectoplasm", "id": 19721 }
+            ],
+            "cell": "D15:D16"
+        },
+        { "label": "Mystic Coin", "id": 19976, "cell": "J16" },
+        { "label": "Mystic Crystal", "id": 20799, "cell": "J18" },
+        { "label": "Gift of the Battle", "id": 19678, "cell": "E24" },
+        {
+            "label": "Gift of the Ice",
+            "items": [
+                { "label": "Orichalcum Ingot", "id": 19685 },
+                { "label": "Gift of Sanctuary - Symbols of Koda (later by wallet)" },
+                { "label": "Glacial Lodestone", "id": 24320 },
+                { "label": "Corrupted Lodestone", "id": 24340 }
+            ],
+            "cell": "F28:F31"
+        },
+        {
+            "label": "Icy runestones + Sigil of Ice",
+            "items": [
+                { "label": "Icy runestone", "id": 19676 },
+                { "label": "Superior sigil of Ice", "id": 24555 }
+            ],
+            "cell": "D32:D33"
+        },
+        {
+            "label": "Gift of Metal",
+            "items": [
+                { "label": "Orichalcum Ingot", "id": 19685 },
+                { "label": "Mithril Ingot", "id": 19684 },
+                { "label": "Darksteel Ingot", "id": 19681 },
+                { "label": "Platinum Ingot", "id": 19686 }
+            ],
+            "cell": "F35:F38"
+        }
+    ],
+    "known": [
+        { "label": "Recipe Gift of Ice", "id": 9616, "cell": "F27", "value": 10 },
+        { "label": "Recipe Gift of Metal", "id": 9615, "cell": "F34", "value": 10 }
+    ],
+    "price": [
+        {
+            "label": "Gift of Fortune (list of all materials)",
+            "items": [
+                { "label": "Vicious Fang", "id": 24357 },
+                { "label": "Armored Scale", "id": 24289 },
+                { "label": "Vicious Claw", "id": 24351 },
+                { "label": "Ancient Bone", "id": 24358 },
+                { "label": "Vial of powerfull blood", "id": 24295 },
+                { "label": "Powerful Venom Sac", "id": 24283 },
+                { "label": "Elaborate Totem", "id": 24300 },
+                { "label": "Pile of Crystaline Dust", "id": 24277 }
+            ],
+            "cell": "J6:J13"
+        },
+        { "label": "Glob of Ectoplasm", "id": 19721, "cell": "D17" },
+        {
+            "label": "Gift of Ice (list of all materials)",
+            "items": [
+                { "label": "Glacial Lodestone", "id": 24320 },
+                { "label": "Corrupted Lodestone", "id": 24340 }
+            ],
+            "cell": "H30:H31"
+        },
+        {
+            "label": "Gift of Metal",
+            "items": [
+                { "label": "Orichalcum Ingot", "id": 19685 },
+                { "label": "Mithril Ingot", "id": 19684 },
+                { "label": "Darksteel Ingot", "id": 19681 },
+                { "label": "Platinum Ingot", "id": 19686 }
+            ],
+            "cell": "H35:H38"
+        },
+        { "label": "Mystic Coin", "id": 19976, "cell": "O11" }
+    ],
+    "currency": [
+        { "label": "Karma", "id": 2, "cell": "P13" },
+        { "label": "Laurels", "id": 3, "cell": "P16" },
+        { "label": "Airship parts", "id": 19, "cell": "P30" },
+        { "label": "Lumps of Aurillium", "id": 22, "cell": "P38" },
+        { "label": "Unbound Magic", "id": 32, "cell": "P33" },
+        { "label": "Bandit Crests", "id": 27, "cell": "P34" },
+        { "label": "Skirmish Claim", "id": 26, "cell": "P37" },
+        { "label": "Symbol of Koda", "id": 12, "cell": "F29" },
+        { "label": "Spirit Shards", "id": 23, "cell": "O14" }
+    ]
+}

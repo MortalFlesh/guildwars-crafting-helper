@@ -12,6 +12,7 @@ module Api =
     type private WalletSchema = JsonProvider<const(BaseUrl + "/account/wallet?access_token=" + ApiKey)>
     type private TradingPostDeliverySchema = JsonProvider<"schema/tradingPostDelivery.json", SampleIsList=true>
     type private TradingPostListingSchema = JsonProvider<"schema/tradingPostListing.json">
+    type private ItemsSchema = JsonProvider<"schema/items.json">
     type private KnownRecipeSchema = JsonProvider<const(BaseUrl + "/account/recipes?access_token=" + ApiKey)>
     type private RecipeSchema = JsonProvider<"schema/recipe.json">
 
@@ -71,18 +72,31 @@ module Api =
         |> Http.RequestString
         |> TradingPostListingSchema.Parse
         |> Seq.map (fun item ->
+            let takeUpTo limit seq =
+                let length = seq |> Seq.length
+                let realLimit =
+                    if length > limit then limit
+                    else length
+
+                seq
+                |> Seq.take realLimit
+
             let averagePrice =
                 let averageBuys =
-                    item.Buys
-                    |> Seq.take 3
-                    |> List.ofSeq
-                    |> List.averageBy (fun i -> i.UnitPrice |> float)
+                    if item.Buys.Length > 0 then
+                        item.Buys
+                        |> takeUpTo 3
+                        |> List.ofSeq
+                        |> List.averageBy (fun i -> i.UnitPrice |> float)
+                    else 0.0
 
                 let averageSells =
-                    item.Sells
-                    |> Seq.take 3
-                    |> List.ofSeq
-                    |> List.averageBy (fun i -> i.UnitPrice |> float)
+                    if item.Sells.Length > 0 then
+                        item.Sells
+                        |> takeUpTo 3
+                        |> List.ofSeq
+                        |> List.averageBy (fun i -> i.UnitPrice |> float)
+                    else 0.0
 
                 [averageBuys; averageSells]
                 |> List.average
@@ -90,6 +104,28 @@ module Api =
                 |> float
                 |> fun average -> average / 10000.0 // to gold 12345 -> 1.2345 G
             (item.Id, averagePrice)
+        )
+        |> Map.ofSeq
+
+    let fetchItems (ids: int list) =
+        let route =
+            ids
+            |> List.map string
+            |> String.concat ","
+            |> sprintf "%s/items?ids=%s&lang=en" BaseUrl
+
+        route
+        |> Http.RequestString
+        |> ItemsSchema.Parse
+        |> Seq.map (fun item ->
+
+            (
+                item.Id,
+                {
+                    Id = item.Id
+                    Name = item.Name
+                }
+            )
         )
         |> Map.ofSeq
 
