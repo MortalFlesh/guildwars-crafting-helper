@@ -112,6 +112,14 @@
             "cell": "F86:F88"
         },
         { "label": "Crystalline Ingot", "id": 46683, "cell": "D91" },
+        {
+            "label": "Druid Runestones",
+            "items": [
+                { "label": "Druid Runestone", "id": 81140 },
+                { "label": "Druid Runestone Fragment", "id": 81111 }
+            ],
+            "cell": "O75:076"
+        },
         { "label": "Xunlai Electrum Ingot", "id": 46743, "cell": "B99" },
         {
             "label": "Xunlai Electrum Ingot Parts",

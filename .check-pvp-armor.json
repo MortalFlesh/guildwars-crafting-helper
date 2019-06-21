@@ -73,7 +73,33 @@
             "cell": "G55:G56"
         },
         { "label": "Shard of Glory", "id": 70820, "cell": "E63" },
-        { "label": "Memory of Battle", "id": 71581, "cell": "P36" }
+        { "label": "Memory of Battle", "id": 71581, "cell": "P36" },
+        {
+            "label": "Grandmaster leather mark",
+            "items": [
+                { "label": "Carbonized Mithrillium Ingot", "id": 80714 },
+                { "label": "Lump of Mithrilium", "id": 46742 },
+                { "label": "Iron Ingot", "id": 19683 },
+                { "label": "Steel Ingot", "id": 19688 },
+                { "label": "Darksteel Ingot", "id": 19681 },
+                { "label": "Square of Vabbian Silk", "id": 80775 },
+                { "label": "Spool of Silk Weaving Thread", "id": 46740 },
+                { "label": "Bolt of Wool", "id": 19740 },
+                { "label": "Bolt of Cotton", "id": 19742 },
+                { "label": "Bolt of Linen", "id": 19744 },
+                { "label": "Blended Leather Sheet", "id": 80723 },
+                { "label": "Spool of Thick Elonian Cord", "id": 46745 },
+                { "label": "Cured Thin Leather Square", "id": 19735 },
+                { "label": "Cured Coarse Leather Square", "id": 19734 },
+                { "label": "Cured Rugged Leather Square", "id": 19736 },
+                { "label": "Empowered Cured Thick Leather Square", "id": 80743 },
+                { "label": "Glob of Dark Matter", "id": 46681 },
+                { "label": "Vial of Might", "id": 80764 },
+                { "label": "Vial of Magic", "id": 80728 },
+                { "label": "Cured Thick Leather Square", "id": 19735 }
+            ],
+            "cell": "E93:E112"
+        }
     ],
     "known": [
         { "label": "Recipe Gift of Blood", "id": 75645, "cell": "H4", "value": 10 },
@@ -142,7 +168,33 @@
         },
         { "label": "Mystic Coin", "id": 19976, "cell": "O11" },
         { "label": "Stabilizing Matrix", "id": 73248, "cell": "O12" },
-        { "label": "Shard of Glory", "id": 70820, "cell": "G63" }
+        { "label": "Shard of Glory", "id": 70820, "cell": "G63" },
+        {
+            "label": "Grandmaster leather mark",
+            "items": [
+                { "label": "Carbonized Mithrillium Ingot", "id": 80714 },
+                { "label": "Lump of Mithrilium" },
+                { "label": "Iron Ingot", "id": 19683 },
+                { "label": "Steel Ingot", "id": 19688 },
+                { "label": "Darksteel Ingot", "id": 19681 },
+                { "label": "Square of Vabbian Silk", "id": 80775 },
+                { "label": "Spool of Silk Weaving Thread" },
+                { "label": "Bolt of Wool", "id": 19740 },
+                { "label": "Bolt of Cotton", "id": 19742 },
+                { "label": "Bolt of Linen", "id": 19744 },
+                { "label": "Blended Leather Sheet", "id": 80723 },
+                { "label": "Spool of Thick Elonian Cord" },
+                { "label": "Cured Thin Leather Square", "id": 19735 },
+                { "label": "Cured Coarse Leather Square", "id": 19734 },
+                { "label": "Cured Rugged Leather Square", "id": 19736 },
+                { "label": "Empowered Cured Thick Leather Square" },
+                { "label": "Glob of Dark Matter" },
+                { "label": "Vial of Might", "id": 80764 },
+                { "label": "Vial of Magic", "id": 80728 },
+                { "label": "Cured Thick Leather Square", "id": 19735 }
+            ],
+            "cell": "G93:G112"
+        }
     ],
     "currency": [
         { "label": "Karma", "id": 2, "cell": "P13" },

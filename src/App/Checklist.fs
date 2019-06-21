@@ -145,7 +145,10 @@ let prepareChecklist log (checklist: Checklist): PreparedChecklist =
 
     let getPriceById id =
         itemPrices
-        |> Map.find id
+        |> Map.tryFind id
+        |> function
+            | Some price -> price
+            | _ -> failwithf "Price by id \"%i\" was not found. Check that it is priceable item." id
 
     let pricedItems =
         checklist.Price
