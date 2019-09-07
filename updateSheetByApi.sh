@@ -31,8 +31,8 @@ php src/Sheets/Wrapper/app.php
 
 # --------------------
 
-export LIST_NAME="Aurora (legendary trinket)"
-export CHECKLIST=".check-aurora.json"
+export LIST_NAME="Pharus (legendary bow)"
+export CHECKLIST=".check-pharus.json"
 
 echo "=========================="
 echo $LIST_NAME
