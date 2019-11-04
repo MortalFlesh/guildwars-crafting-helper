@@ -18,21 +18,8 @@ php src/Sheets/Wrapper/app.php
 
 # --------------------
 
-export LIST_NAME="Ascension (legendary backpack)"
-export CHECKLIST=".check-ascension.json"
-
-echo "=========================="
-echo $LIST_NAME
-echo "=========================="
-echo
-
-dotnet src/App/bin/Release/netcoreapp2.1/App.dll
-php src/Sheets/Wrapper/app.php
-
-# --------------------
-
-export LIST_NAME="Pharus (legendary bow)"
-export CHECKLIST=".check-pharus.json"
+export LIST_NAME="Inventory Bags"
+export CHECKLIST=".inventory-bags.json"
 
 echo "=========================="
 echo $LIST_NAME
