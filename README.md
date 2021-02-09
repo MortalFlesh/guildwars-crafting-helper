@@ -1,6 +1,8 @@
 Guild Wars - Crafting helper
 ============================
 
+> Console application for help a crafting process in Guild Wars 2
+
 ## Authorization
 
 ### Guild Wars 2 Api
