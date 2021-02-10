@@ -30,7 +30,9 @@
 
     <!-- commands -->
     <Compile Include="src/Command/Common.fs" />
-    <Compile Include="src/Command/CheckCommand.fs" />
+
+    <Compile Include="src/Command/CheckCommand/ChecklistParser.fs" />
+    <Compile Include="src/Command/CheckCommand/CheckCommand.fs" />
   </ItemGroup>
 
   <ItemGroup>
