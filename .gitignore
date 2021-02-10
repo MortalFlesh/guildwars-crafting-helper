@@ -33,4 +33,4 @@ token.json/
 
 # Local files
 .env
-.check.json
+.gw.json

@@ -3,6 +3,7 @@ open System.IO
 open MF.ConsoleApplication
 open MF.GuildWars.Console
 open MF.ErrorHandling
+open MF.Utils
 
 [<EntryPoint>]
 let main argv =
@@ -11,18 +12,22 @@ let main argv =
         info ApplicationInfo.MainTitle
         version AssemblyVersionInformation.AssemblyVersion
 
-        // command "guildWars:property" {
-        //     Description = "Search properties on guildWars."
-        //     Help = None
-        //     Arguments = []
-        //     Options = [
-        //         Option.optional "config" (Some "c") "A file with a configuration." (Some ".guildWars.json")
-        //         Option.optional "storage" (Some "s") "A file path which will be used as a storage for results." None
-        //     ]
-        //     Initialize = None
-        //     Interact = None
-        //     Execute = Command.PropertiesCommand.execute
-        // }
+        command "gw:check" {
+            Description = "Check for resources based on checklist(s)."
+            Help = None
+            Arguments = [
+                Argument.requiredArray "checklist" "A list of checklist(s)."
+            ]
+            Options = [
+                Option.optional "config" (Some "c") "A file with a configuration." (Some ".gw.json")
+            ]
+            Initialize = None
+            Interact = None
+            Execute = Command.Check.execute
+        }
+
+        // todo - check bank
+        // todo - character inventories prices
 
         command "about" {
             Description = "Displays information about the current project."

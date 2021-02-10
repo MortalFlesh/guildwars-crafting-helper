@@ -131,6 +131,7 @@ type Currency = {
 // ---------------------------
 
 type Checklist = {
+    Name: string
     Count: ItemToCount list
     Known: Recipe list
     Price: ItemToPrice list

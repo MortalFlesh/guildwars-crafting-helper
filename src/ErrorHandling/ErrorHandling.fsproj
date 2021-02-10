@@ -10,6 +10,9 @@
 
     <ItemGroup>
         <Compile Include="Result.fs" />
+        <Compile Include="Validation.fs" />
+        <Compile Include="Async.fs" />
+        <Compile Include="AsyncResult.fs" />
         <Compile Include="Option.fs" />
     </ItemGroup>
 

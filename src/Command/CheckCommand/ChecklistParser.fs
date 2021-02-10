@@ -1,4 +1,4 @@
-namespace MF.GuildWars.Console.Command
+namespace MF.GuildWars.Console.Command.CheckCommand
 
 [<RequireQualifiedAccess>]
 module ChecklistParser =
@@ -8,7 +8,7 @@ module ChecklistParser =
 
     type private ChecklistSchema = JsonProvider<"src/Command/CheckCommand/schema/checkList.json">
 
-    let parseChecklist checklistName =
+    let parse checklistName: Checklist =
         let checklistData =
             checklistName
             |> File.ReadAllText
@@ -124,6 +124,7 @@ module ChecklistParser =
             |> List.ofSeq
 
         {
+            Name = checklistName |> Path.GetFileName
             Count = count
             Known = known
             Price = price

@@ -50,7 +50,7 @@ module GuildWars =
             |> List.ofSeq
     }
 
-    let fetchCharacters apiKey (): AsyncResult<Inventory, string list> = asyncResult {
+    let fetchCharacters apiKey: AsyncResult<Inventory, string list> = asyncResult {
         let! response =
             "characters"
             |> Api.path apiKey
@@ -63,17 +63,15 @@ module GuildWars =
         return!
             characters
             |> Seq.toList
-            |> List.map (fetchInventory apiKey >@> List.singleton)
-            |> AsyncResult.ofParallelAsyncResults
-                (sprintf "Fetching inventories failed:\n%A" >> List.singleton)
-                List.concat
+            |> List.map (fetchInventory apiKey)
+            |> AsyncResult.ofParallelAsyncResults (sprintf "Fetching inventories failed:\n%A") <!> List.concat
     }
 
-    let fetchBank apiKey () =
+    let fetchBank apiKey =
         let fetchBankItems =
             "account/bank"
             |> Api.path apiKey
-            |> Api.fetch <@> List.singleton
+            |> Api.fetch
             <!> fun response ->
                 response
                 |> BankSchema.Parse
@@ -83,7 +81,7 @@ module GuildWars =
         let fetchMaterials =
             "account/materials"
             |> Api.path apiKey
-            |> Api.fetch <@> List.singleton
+            |> Api.fetch
             <!> fun response ->
                 response
                 |> MaterialsSchema.Parse
@@ -94,11 +92,9 @@ module GuildWars =
             fetchBankItems
             fetchMaterials
         ]
-        |> AsyncResult.ofParallelAsyncResults
-            (sprintf "Fetching bank failed:\n%A" >> List.singleton)
-            List.concat
+        |> AsyncResult.ofParallelAsyncResults (sprintf "Fetching bank failed:\n%A") <!> List.concat
 
-    let fetchWallet apiKey () = asyncResult {
+    let fetchWallet apiKey = asyncResult {
         let! response =
             "account/wallet"
             |> Api.path apiKey
@@ -111,7 +107,7 @@ module GuildWars =
             |> List.ofSeq
     }
 
-    let fetchTradingPostDelivery apiKey () = asyncResult {
+    let fetchTradingPostDelivery apiKey = asyncResult {
         let! response =
             "commerce/delivery"
             |> Api.path apiKey
@@ -184,7 +180,7 @@ module GuildWars =
             |> Map.ofSeq
     }
 
-    let fetchKnownRecipes apiKey () = asyncResult {
+    let fetchKnownRecipes apiKey = asyncResult {
         let! response =
             "account/recipes"
             |> Api.path apiKey

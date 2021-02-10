@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="FileStorage.fs" />
+        <Compile Include="Types.fs" />
         <Compile Include="GoogleSheets.fs" />
     </ItemGroup>
 
