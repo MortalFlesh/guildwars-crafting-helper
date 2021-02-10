@@ -1,4 +1,4 @@
-namespace ApiProvider
+namespace MF.Api
 
 // ============================
 // Checklist
@@ -11,12 +11,14 @@ type ExactCell = {
 type SingleCell = private SingleCell of string // A1
 type RangeCell = private RangeCell of string // A2:A5
 
+[<RequireQualifiedAccess>]
 module SingleCell =
     let value (SingleCell single) = single
     let create (single: string) =
         if single.Contains(':') then failwithf "Single cell must not contain :"
         SingleCell single
 
+[<RequireQualifiedAccess>]
 module RangeCell =
     let value (RangeCell range) = range
     let create (range: string) =
@@ -27,6 +29,7 @@ type Cell =
     | Single of SingleCell
     | Range of RangeCell
 
+[<RequireQualifiedAccess>]
 module Cell =
     let value = function
         | Single (SingleCell cell) -> cell
@@ -138,6 +141,8 @@ type Checklist = {
 // Api
 // ===========================
 
+type ApiKey = ApiKey of string
+
 type ItemInfo = {
     Id: int
     Name: string
@@ -155,6 +160,7 @@ type CurrencyItem = {
     Amount: int
 }
 
+[<RequireQualifiedAccess>]
 module CurrencyItem =
     let getAmount { Amount = amount } = amount
 

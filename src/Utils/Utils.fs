@@ -185,6 +185,16 @@ module List =
         list |> splitter [] [] f
 
 [<RequireQualifiedAccess>]
+module Seq =
+    let takeUpTo limit seq =
+        let mutable counter = -1
+        seq
+        |> Seq.takeWhile (fun _ ->
+            counter <- counter + 1
+            counter < limit
+        )
+
+[<RequireQualifiedAccess>]
 module Map =
     let keys map =
         map

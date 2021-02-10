@@ -116,8 +116,16 @@ module Result =
             fR >> Result.map f
 
         /// Composition of 2 functions by mapping an Error from 1st function into the 2nd
-        let (>@>) fR fE =
+        let inline (>@>) fR fE =
             fR >> Result.mapError fE
+
+        /// Compose with tee function
+        let inline (>@*>) fR f =
+            fR >> tee f
+
+        /// Compose with tee error function
+        let inline (>@@>) fR fE =
+            fR >> teeError fE
 
 [<AutoOpen>]
 module ResultComputationExpression =
@@ -353,10 +361,6 @@ module AsyncResult =
     let ofResult x : AsyncResult<_, _> =
         x |> Async.retn
 
-    /// Lift an Option into an AsyncResult
-    let ofOption e x : AsyncResult<_, _> =
-        x |> Result.ofOption e |> ofResult
-
     /// Lift a Async into an AsyncResult
     let ofAsync x : AsyncResult<_, _> =
         x |> Async.map Result.Ok
@@ -372,6 +376,35 @@ module AsyncResult =
     /// Lift a Task into an AsyncResult and handles exception into Result
     let ofTaskCatch f x : AsyncResult<_, _> =
         x |> ofTask |> catch f
+
+    /// Run asyncResults in Parallel, handles the errors and concats results
+    let ofParallelAsyncResults<'Data, 'Error>
+        (ofExn: exn -> 'Error)
+        (ofErrors: 'Error list -> 'Error)
+        (asyncResults: AsyncResult<'Data list, 'Error> list)
+        : AsyncResult<'Data list, 'Error> =
+
+        asyncResults
+        |> Async.Parallel
+        |> ofAsyncCatch ofExn
+        |> bind (
+            Seq.toList
+            >> Validation.ofResults
+            >> Result.map List.concat
+            >> Result.mapError ofErrors
+            >> ofResult
+        )
+
+    /// Run asyncs in Parallel, handles the errors and concats results
+    let ofParallelAsyncs<'Data, 'Error>
+        (ofExn: exn -> 'Error)
+        (asyncs: Async<'Data list> list)
+        : AsyncResult<'Data list, 'Error> =
+
+        asyncs
+        |> Async.Parallel
+        |> ofAsyncCatch ofExn
+        |> map List.concat
 
     //-----------------------------------
     // Utilities lifted from Async
@@ -397,6 +430,30 @@ module AsyncResult =
 
         /// AsyncResult.mapError
         let inline (<@>) r f = mapError f r
+
+        /// Kleisli composition (composition of 2 functions, which returns an AsyncResult)
+        let inline (>=>) fR fR2 =
+            fR >> bind fR2
+
+        /// Kleisli composition for errors (composition of 2 functions, which returns an AsyncResult)
+        let inline (>->) fR fR2 =
+            fR >> bindError fR2
+
+        /// Composition of 2 functions by mapping a Success from 1st function into the 2nd
+        let inline (>!>) fR f =
+            fR >> map f
+
+        /// Composition of 2 functions by mapping an Error from 1st function into the 2nd
+        let inline (>@>) fR fE =
+            fR >> mapError fE
+
+        /// Compose with tee function
+        let inline (>@*>) fR f =
+            fR >> tee f
+
+        /// Compose with tee error function
+        let inline (>@@>) fR fE =
+            fR >> teeError fE
 
 // ==================================
 // AsyncResult computation expression

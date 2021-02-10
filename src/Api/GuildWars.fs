@@ -1,201 +1,210 @@
 namespace MF.Api
 
-// See https://github.com/mecv01/guildWars-client
-
-open System
-
 [<RequireQualifiedAccess>]
 module GuildWars =
+    open System
     open FSharp.Data
     open MF.ErrorHandling
+    open MF.ErrorHandling.AsyncResult.Operators
 
-    type Search = {
-        Title: string
-        Parameters: string
-    }
-
-    type Property = {
-        SearchTitle: string
-        Id: string
-        Name: string
-        Locality: string
-        Price: int
-        Detail: string
-        Labels: string list
-        IsNew: bool
-        HasFloorPlan: bool
-        HasVideo: bool
-        HasPanorama: bool
-        Status: string
-        UpdatedAt: DateTime
-    }
+    type private CharactersSchema = JsonProvider<"schema/characters.json">
+    type private InventorySchema = JsonProvider<"schema/inventory.json">
+    type private BankSchema = JsonProvider<"schema/bank.json">
+    type private MaterialsSchema = JsonProvider<"schema/materials.json">
+    type private WalletSchema = JsonProvider<"schema/wallet.json">
+    type private TradingPostDeliverySchema = JsonProvider<"schema/tradingPostDelivery.json", SampleIsList=true>
+    type private TradingPostListingSchema = JsonProvider<"schema/tradingPostListing.json">
+    type private ItemsSchema = JsonProvider<"schema/items.json">
+    type private KnownRecipeSchema = JsonProvider<"schema/knownRecepies.json">
+    type private RecipeSchema = JsonProvider<"schema/recipe.json">
 
     [<RequireQualifiedAccess>]
-    module Property =
-        open MF.Utils
+    module private Api =
+        [<Literal>]
+        let BaseUrl = "https://api.guildwars2.com/v2"
 
-        type private PropertySchema = JsonProvider<"schema/guildWarsProperty.json", SampleIsList = true>
+        let path (ApiKey token) path =
+            sprintf "%s/%s?access_token=%s" BaseUrl path token
 
-        let searchTitle { SearchTitle = searchTitle } = searchTitle
-        let id { Id = id } = id
+        let fetch url =
+            url
+            |> Http.AsyncRequestString
+            |> AsyncResult.ofAsyncCatch (sprintf "Error while fetching %A:\n%A" url)
 
-        let serializeToJson (property: Property) = property |> Serialize.toJson
-        let serializeToSeparatedValues separator (property: Property) =
-            [
-                property.SearchTitle
-                property.Id
-                property.Name
-                property.Locality
-                (property.Price |> string)
-                property.Detail
-                (property.Labels |> String.concat ", ")
-                (if property.IsNew then "Ano" else "Ne")
-                (if property.HasFloorPlan then "Ano" else "Ne")
-                (if property.HasVideo then "Ano" else "Ne")
-                (if property.HasPanorama then "Ano" else "Ne")
-                property.Status
-                property.UpdatedAt.ToUniversalTime().AddHours(1.).ToString("HH:mm dd.MM.yyyy")
-            ]
-            |> String.concat separator
+    let fetchInventory apiKey character: AsyncResult<Inventory, _> = asyncResult {
+        let! response =
+            sprintf "characters/%s" character
+            |> Api.path apiKey
+            |> Api.fetch
 
-        let parseJson (value: string) =
-            try
-                let p = value |> PropertySchema.Parse
+        let data =
+            response
+            |> InventorySchema.Parse
 
-                Some {
-                    SearchTitle = p.SearchTitle
-                    Id = p.Id |> string
-                    Name = p.Name
-                    Locality = p.Locality
-                    Price = p.Price
-                    Detail = p.Detail
-                    Labels = p.Labels |> Seq.toList
-                    IsNew = p.IsNew
-                    HasFloorPlan = p.HasFloorPlan
-                    HasVideo = p.HasVideo
-                    HasPanorama = p.HasPanorama
-                    Status = p.Status |> Option.defaultValue ""
-                    UpdatedAt = DateTime.Now
-                }
-
-            with _ -> None
-
-        let parseValues (separator: string) = function
-            | String.IsEmpty -> None
-            | value ->
-                let p = { SearchTitle = ""; Id = ""; Name = ""; Locality = ""; Price = 0; Detail = ""; Labels = []; IsNew = false; HasFloorPlan = false; HasVideo = false; HasPanorama = false; Status = ""; UpdatedAt = DateTime.Now }
-
-                match value.Split separator |> Seq.toList with
-                | [ searchTitle; id; name; locality; price; detail; labels; isNew; hasFloorPlan; hasVideo; hasPanorama; status; _ (* updatedAt *) ]
-                | [ searchTitle; id; name; locality; price; detail; labels; isNew; hasFloorPlan; hasVideo; hasPanorama; status ] ->
-                    Some {
-                        p with
-                            SearchTitle = searchTitle
-                            Id = id
-                            Name = name
-                            Locality = locality
-                            Price = try price |> int with _ -> 0
-                            Detail = detail
-                            Labels = labels.Split ',' |> Seq.map (String.trim ' ') |> Seq.toList
-                            IsNew = isNew = "Ano"
-                            HasFloorPlan = hasFloorPlan = "Ano"
-                            HasVideo = hasVideo = "Ano"
-                            HasPanorama = hasPanorama = "Ano"
-                            Status = status
-                    }
-                | [ searchTitle; id; name; locality; price; detail; labels; isNew; hasFloorPlan; hasVideo; hasPanorama ] ->
-                    Some {
-                        p with
-                            SearchTitle = searchTitle
-                            Id = id
-                            Name = name
-                            Locality = locality
-                            Price = try price |> int with _ -> 0
-                            Detail = detail
-                            Labels = labels.Split ',' |> Seq.map (String.trim ' ') |> Seq.toList
-                            IsNew = isNew = "Ano"
-                            HasFloorPlan = hasFloorPlan = "Ano"
-                            HasVideo = hasVideo = "Ano"
-                            HasPanorama = hasPanorama = "Ano"
-                    }
-                | [ searchTitle; id; name; locality; price ] ->
-                    Some {
-                        p with
-                            SearchTitle = searchTitle
-                            Id = id
-                            Name = name
-                            Locality = locality
-                            Price = try price |> int with _ -> 0
-                    }
-                | [ searchTitle; id ] ->
-                    Some {
-                        p with
-                            SearchTitle = searchTitle
-                            Id = id
-                    }
-                | _ -> None
-
-    type private BaseOptions = {
-        BaseUrl: string
-        Method: string
-    }
-
-    let private baseOptions = {
-        BaseUrl = "https://www.guildWars.cz/api/cs/v2"
-        Method = "GET"
-    }
-
-    [<RequireQualifiedAccess>]
-    module private Response =
-        let private detailUrl hashId = sprintf "https://www.guildWars.cz/detail/1/2/3/4/%s" hashId
-
-        type private EstatesResponseSchema = JsonProvider<"schema/estatesResponse.json", SampleIsList = true>
-
-        let parse searchTitle response = asyncResult {
-            try
-                let response = response |> EstatesResponseSchema.Parse
-
-                return
-                    response.Embedded.Estates
-                    |> Seq.choose (fun estate -> maybe {
-                        if estate.IsAuction then return! None
-
-                        let id = estate.HashId |> string
-
-                        return {
-                            SearchTitle = searchTitle
-                            Id = id
-                            Name = estate.Name
-                            Locality = estate.Locality
-                            Price = estate.PriceCzk.ValueRaw
-                            Detail = detailUrl id
-                            Labels = estate.Labels |> Seq.toList
-                            IsNew = estate.New
-                            HasFloorPlan = estate.HasFloorPlan > 0
-                            HasVideo = estate.HasVideo
-                            HasPanorama = estate.HasPanorama > 0
-                            Status = ""
-                            UpdatedAt = DateTime.Now
-                        }
-                    })
-                    |> Seq.toList
-
-            with e -> return! AsyncResult.ofError e.Message
-        }
-
-    let private fetch path { Title = title; Parameters = queryString }: AsyncResult<Property list, string> = asyncResult {
-        let url = sprintf "%s%s?%s" baseOptions.BaseUrl path queryString
-
-        let! rawResponse =
-            Http.AsyncRequestString (
-                url,
-                httpMethod = baseOptions.Method
+        return
+            data.Bags
+            |> Seq.collect (fun bag ->
+                bag.Inventory
+                |> Seq.map (fun item -> { Id = item.Id; Count = item.Count } )
             )
-            |> AsyncResult.ofAsyncCatch (fun e -> e.Message)
+            |> List.ofSeq
+    }
+
+    let fetchCharacters apiKey (): AsyncResult<Inventory, string list> = asyncResult {
+        let! response =
+            "characters"
+            |> Api.path apiKey
+            |> Api.fetch <@> List.singleton
+
+        let characters =
+            response
+            |> CharactersSchema.Parse
 
         return!
-            rawResponse
-            |> Response.parse title
+            characters
+            |> Seq.toList
+            |> List.map (fetchInventory apiKey >@> List.singleton)
+            |> AsyncResult.ofParallelAsyncResults
+                (sprintf "Fetching inventories failed:\n%A" >> List.singleton)
+                List.concat
     }
 
-    let fetchProperties = fetch "/estates"
+    let fetchBank apiKey () =
+        let fetchBankItems =
+            "account/bank"
+            |> Api.path apiKey
+            |> Api.fetch <@> List.singleton
+            <!> fun response ->
+                response
+                |> BankSchema.Parse
+                |> Seq.map (fun item -> { Id = item.Id; Count = item.Count } )
+                |> List.ofSeq
+
+        let fetchMaterials =
+            "account/materials"
+            |> Api.path apiKey
+            |> Api.fetch <@> List.singleton
+            <!> fun response ->
+                response
+                |> MaterialsSchema.Parse
+                |> Seq.map (fun material -> { Id = material.Id; Count = material.Count } )
+                |> List.ofSeq
+
+        [
+            fetchBankItems
+            fetchMaterials
+        ]
+        |> AsyncResult.ofParallelAsyncResults
+            (sprintf "Fetching bank failed:\n%A" >> List.singleton)
+            List.concat
+
+    let fetchWallet apiKey () = asyncResult {
+        let! response =
+            "account/wallet"
+            |> Api.path apiKey
+            |> Api.fetch
+
+        return
+            response
+            |> WalletSchema.Parse
+            |> Seq.map (fun currency -> { Id = currency.Id; Amount = currency.Value } )
+            |> List.ofSeq
+    }
+
+    let fetchTradingPostDelivery apiKey () = asyncResult {
+        let! response =
+            "commerce/delivery"
+            |> Api.path apiKey
+            |> Api.fetch
+
+        return
+            response
+            |> TradingPostDeliverySchema.Parse
+            |> fun tradingPost ->
+                tradingPost.Items
+                |> Seq.map (fun item -> { Id = item.Id; Count = item.Count } )
+            |> List.ofSeq
+    }
+
+    /// Recalculate to gold 12345 -> 1.2345 G
+    let toGold value =
+        (value |> int |> float) / 10000.0
+
+    let fetchItemPrices (ids: int list) = asyncResult {
+        let! response =
+            ids
+            |> List.map string
+            |> String.concat ","
+            |> sprintf "%s/commerce/listings?ids=%s" Api.BaseUrl
+            |> Api.fetch
+
+        return
+            response
+            |> TradingPostListingSchema.Parse
+            |> Seq.map (fun item ->
+                let averagePrice =
+                    let averageBuys =
+                        if item.Buys.Length > 0 then
+                            item.Buys.[0..2]
+                            |> Array.averageBy (fun i -> i.UnitPrice |> float)
+                        else 0.0
+
+                    let averageSells =
+                        if item.Sells.Length > 0 then
+                            item.Sells.[0..2]
+                            |> Array.averageBy (fun i -> i.UnitPrice |> float)
+                        else 0.0
+
+                    [averageBuys; averageSells]
+                    |> List.average
+                    |> toGold
+
+                (item.Id, averagePrice)
+            )
+            |> Map.ofSeq
+    }
+
+    let fetchItems (ids: int list) = asyncResult {
+        let! response =
+            ids
+            |> List.map string
+            |> String.concat ","
+            |> sprintf "%s/items?ids=%s&lang=en" Api.BaseUrl
+            |> Api.fetch
+
+        return
+            response
+            |> ItemsSchema.Parse
+            |> Seq.map (fun item ->
+                item.Id, {
+                    Id = item.Id
+                    Name = item.Name
+                }
+            )
+            |> Map.ofSeq
+    }
+
+    let fetchKnownRecipes apiKey () = asyncResult {
+        let! response =
+            "account/recipes"
+            |> Api.path apiKey
+            |> Api.fetch
+
+        return
+            response
+            |> KnownRecipeSchema.Parse
+            |> List.ofSeq
+    }
+
+    let fetchRecipeUnlockId recipeId = asyncResult {
+        let! response =
+            recipeId
+            |> sprintf "%s/items/%i" Api.BaseUrl
+            |> Api.fetch
+
+        return
+            response
+            |> RecipeSchema.Parse
+            |> fun recipe ->
+                recipe.Details.RecipeId
+    }
