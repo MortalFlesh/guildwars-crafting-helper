@@ -76,14 +76,7 @@ module Check =
                 Message = output.Message
             }
 
-            let! config =
-                input
-                |> Input.getOptionValueAsString "config"
-                |> Option.bind Config.parse
-                |> Result.ofOption "Invalid or missing config"
-                |> Result.mapError List.singleton
-
-            if output.IsVerbose() then output.Message <| sprintf "Config: %A" config
+            let! config = Config.get (input, output)
 
             let itemsCache = Cache.create()
             let currencyCache = Cache.create()

@@ -6,34 +6,7 @@ module Checklist =
     open MF.ErrorHandling.AsyncResult.Operators
     open MF.Utils
     open MF.Api
-
-    type Cache<'Data> = Cache of ConcurrentDictionary<string, 'Data>
-
-    [<RequireQualifiedAccess>]
-    module Cache =
-        let create<'Data> () = ConcurrentDictionary<string, 'Data>() |> Cache
-
-        let fetchWithCache<'Data> (output: MF.ConsoleApplication.Output) (Cache cache: Cache<'Data>) key (fetch: AsyncResult<'Data, _>) =
-            if output.IsDebug() then
-                output.Message <| sprintf "Available.keys: %A" cache.Keys
-
-            let log message =
-                if output.IsVerbose() then
-                    output.Message message
-
-            match cache.TryGetValue key with
-            | true, data ->
-                data
-                |> AsyncResult.ofSuccess
-                >>* (fun _ -> sprintf " - %s from cache" key |> log)
-            | _ ->
-                fetch
-                >>* (fun data ->
-                    sprintf " - %s fetched" key |> log
-
-                    cache.[key] <- data
-                    sprintf " - %s data cached" key |> log
-                )
+    open MF.GuildWars.Console.Command
 
     let private collectIdsToPrice checklistPrice =
         checklistPrice

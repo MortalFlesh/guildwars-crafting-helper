@@ -8,7 +8,7 @@ open MF.Utils
 [<EntryPoint>]
 let main argv =
     consoleApplication {
-        title AssemblyVersionInformation.AssemblyProduct
+        title "GuildWars 2"
         info ApplicationInfo.MainTitle
         version AssemblyVersionInformation.AssemblyVersion
 
@@ -26,7 +26,18 @@ let main argv =
             Execute = Command.Check.execute
         }
 
-        // todo - check bank
+        command "gw:bank" {
+            Description = "Inspect a bank for all items and their prices."
+            Help = None
+            Arguments = []
+            Options = [
+                Option.optional "config" (Some "c") "A file with a configuration." (Some ".gw.json")
+            ]
+            Initialize = None
+            Interact = None
+            Execute = Command.Bank.execute
+        }
+
         // todo - character inventories prices
 
         command "about" {

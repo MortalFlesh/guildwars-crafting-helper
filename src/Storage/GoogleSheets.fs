@@ -149,16 +149,3 @@ module GoogleSheets =
             request.Execute() |> ignore
 
         with e -> e |> logError "Clear"
-
-    /// Serialize should return values separated by ;
-    /// Parse will get values separated by ;
-    let create config getKey serialize parse =
-        {
-            Title = sprintf "GoogleSheetsStorage<%s/%s>" config.SpreadsheetId config.Tab
-            GetKey = getKey
-            Serialize = serialize
-            Parse = parse
-            Save = saveItems config serialize
-            Load = loadItems config parse
-            Clear = clear config
-        }

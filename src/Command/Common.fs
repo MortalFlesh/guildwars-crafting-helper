@@ -5,6 +5,24 @@ open MF.ConsoleApplication
 type ExecuteCommand = IO -> ExitCode
 
 [<RequireQualifiedAccess>]
+module Config =
+    open MF.Config
+    open MF.ErrorHandling
+
+    let get (input, output) = result {
+        let! config =
+            input
+            |> Input.getOptionValueAsString "config"
+            |> Option.bind Config.parse
+            |> Result.ofOption "Invalid or missing config"
+            |> Result.mapError List.singleton
+
+        if output.IsVerbose() then output.Message <| sprintf "Config: %A" config
+
+        return config
+    }
+
+[<RequireQualifiedAccess>]
 module Common =
     open System
 
