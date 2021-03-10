@@ -31,12 +31,15 @@
     <!-- commands -->
     <Compile Include="src/Command/Cache.fs" />
     <Compile Include="src/Command/Common.fs" />
+    <Compile Include="src/Command/Types.fs" />
+    <Compile Include="src/Command/Encoder.fs" />
 
-    <Compile Include="src/Command/CheckCommand/Types.fs" />
     <Compile Include="src/Command/CheckCommand/ChecklistParser.fs" />
     <Compile Include="src/Command/CheckCommand/Checklist.fs" />
+    <Compile Include="src/Command/CheckCommand/Encoder.fs" />
     <Compile Include="src/Command/CheckCommand/CheckCommand.fs" />
 
+    <Compile Include="src/Command/BankCommand/Encoder.fs" />
     <Compile Include="src/Command/BankCommand/BankCommand.fs" />
   </ItemGroup>
 

@@ -6,8 +6,7 @@
         "googleSheets": {
             "credentials": "/path/credentials.json",
             "token": "/path/token.json",
-            "spreadsheetId": "[spreadsheetId]",
-            "tab": "List 1"
+            "spreadsheetId": "[spreadsheetId]"
         }
     }
 ]

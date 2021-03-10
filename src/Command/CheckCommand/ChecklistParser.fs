@@ -125,6 +125,7 @@ module ChecklistParser =
 
         {
             Name = checklistName |> Path.GetFileName
+            TabName = checklistData.TabName
             Count = count
             Known = known
             Price = price

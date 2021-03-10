@@ -28,6 +28,7 @@ paket-files/
 
 # application
 dist
+credentials/
 credentials.json
 token.json/
 

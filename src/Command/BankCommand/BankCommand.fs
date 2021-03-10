@@ -10,6 +10,8 @@ module Bank =
     open MF.ErrorHandling
     open MF.ErrorHandling.AsyncResult.Operators
     open MF.Utils
+    open MF.GuildWars.Console.Command
+    open MF.GuildWars.Console.Command.BankCommand
 
     let execute: ExecuteCommand = fun (input, output) ->
         asyncResult {
@@ -90,10 +92,17 @@ module Bank =
             )
             |> output.Options "Bank items (top 10 most expensive items)"
 
-            output.Section "Encode data"
-            // pricedItems
-            // |> encodeBankItems spreadsheetId listName { Letter = "A"; Number = 2 }
-            // |> writeUpdateData (sprintf "%s/%s" Environment.CurrentDirectory "src/Sheets/data/update.json")
+            output.Section "Update sheets"
+            GoogleSheets.clear config.GoogleSheets (TabName "Bank") "A2" "D400"
+
+            let log message =
+                if output.IsVerbose() then
+                    output.Message <| sprintf "[Sheets] %s" message
+
+            do!
+                pricedItems
+                |> BankEncoder.encodeItems config.GoogleSheets.SpreadsheetId (TabName "Bank") { Letter = "A"; Number = 2 }
+                |> GoogleSheets.updateSheets log config.GoogleSheets
 
             return "Done"
         }

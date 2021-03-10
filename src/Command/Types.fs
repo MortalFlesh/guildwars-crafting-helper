@@ -1,6 +1,7 @@
-namespace MF.GuildWars.Console.Command.CheckCommand
+namespace MF.GuildWars.Console.Command
 
 open MF.Api
+open MF.Storage
 
 type Log = {
     Section: string -> unit
@@ -79,6 +80,7 @@ type CurrencyWithAmount = {
 
 type PreparedChecklist = {
     Name: string
+    TabName: TabName
     Count: ItemWithCount list
     Known: Recipe list
     Price: ItemWithPrice list

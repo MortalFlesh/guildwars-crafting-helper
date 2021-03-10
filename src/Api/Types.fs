@@ -132,6 +132,7 @@ type Currency = {
 
 type Checklist = {
     Name: string
+    TabName: string
     Count: ItemToCount list
     Known: Recipe list
     Price: ItemToPrice list

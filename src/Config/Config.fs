@@ -30,6 +30,5 @@ module Config =
                     Credentials = parsed.GoogleSheets.Credentials
                     Token = parsed.GoogleSheets.Token
                     SpreadsheetId = parsed.GoogleSheets.SpreadsheetId
-                    Tab = parsed.GoogleSheets.Tab
                 }
             }

@@ -9,6 +9,7 @@ module Check =
     open MF.Storage
     open MF.ErrorHandling
     open MF.Utils
+    open MF.GuildWars.Console.Command
     open MF.GuildWars.Console.Command.CheckCommand
     open MF.GuildWars.Console.Command.CheckCommand.Checklist
 
@@ -58,22 +59,28 @@ module Check =
             |> String.concat "\n"
             |> sprintf "%s:\n%s" l.Label
 
-    let private printLines output format list =
+    let private logLines (output: Output) format list =
         list
-        |> List.map format
-        |> output.List
+            |> List.length
+            |> sprintf " -> <c:green>Done</c> with <c:magenta>%A</c> items"
+            |> output.Message
+
+        if output.IsVerbose() then
+            list
+            |> List.map format
+            |> output.List
 
     let execute: ExecuteCommand = fun (input, output) ->
         result {
             output.Title "Check items"
 
-            let log = {
+            let log checklist = {
                 Section =
                     fun section ->
                         output.NewLine()
-                        output.Section section
-                HighlightedMessage = output.SubTitle
-                Message = output.Message
+                        output.Section <| sprintf "[%s] %s" checklist section
+                HighlightedMessage = sprintf "[%s] %s" checklist >> output.SubTitle
+                Message = sprintf "[%s] %s" checklist >> output.Message
             }
 
             let! config = Config.get (input, output)
@@ -93,35 +100,49 @@ module Check =
                 |> Validation.ofResults
                 |> Result.mapError List.concat
 
-            checklists
-            |> List.iter (fun checklist ->
-                checklist.IdsToPrice
-                |> showLinksForTradingPost log
+            do!
+                checklists
+                |> List.map (fun checklist -> asyncResult {
+                    let log =
+                        let (TabName name) = checklist.TabName
+                        log name
 
-                log.Section "Count items"
-                checklist.Count
-                |> printLines output formatCountedItem
+                    checklist.IdsToPrice
+                    |> showLinksForTradingPost log
 
-                log.Section "Known recipes"
-                checklist.Known
-                |> printLines output (fun r -> sprintf "%s: %i" r.Item.Label r.Value)
+                    log.Section "Count items"
+                    checklist.Count
+                    |> logLines output formatCountedItem
 
-                log.Section "Price items"
-                checklist.Price
-                |> printLines output formatPricedItem
+                    log.Section "Known recipes"
+                    checklist.Known
+                    |> logLines output (fun r -> sprintf "%s: %i" r.Item.Label r.Value)
 
-                log.Section "Wallet items"
-                checklist.Currency
-                |> printLines output (fun c -> sprintf "%s: %i" c.Currency.Label c.Amount)
+                    log.Section "Price items"
+                    checklist.Price
+                    |> logLines output formatPricedItem
 
-                // todo -- store data to sheets storage
+                    log.Section "Wallet items"
+                    checklist.Currency
+                    |> logLines output (fun c -> sprintf "%s: %i" c.Currency.Label c.Amount)
 
-                (* log.Section "Encode data"
-                checklist
-                |> encode spreadsheetId listName
-                |> writeUpdateData (sprintf "%s/%s" Environment.CurrentDirectory "src/Sheets/data/update.json") *)
+                    log.Section "Encode data"
+                    let encodedCheckList =
+                        checklist
+                        |> CheckListEncoder.encode config.GoogleSheets.SpreadsheetId checklist.TabName
 
-            )
+                    log.Section "Update google sheets"
+                    let logSheets message =
+                        if output.IsVerbose() then
+                            output.Message <| sprintf "[Sheets] %s" message
+
+                    return!
+                        encodedCheckList
+                        |> GoogleSheets.updateSheets logSheets config.GoogleSheets
+                })
+                |> AsyncResult.ofSequentialAsyncResults (sprintf "%A")
+                |> AsyncResult.map ignore
+                |> Async.RunSynchronously
 
             return "Done"
         }

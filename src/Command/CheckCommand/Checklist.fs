@@ -6,6 +6,7 @@ module Checklist =
     open MF.ErrorHandling.AsyncResult.Operators
     open MF.Utils
     open MF.Api
+    open MF.Storage
     open MF.GuildWars.Console.Command
 
     let private collectIdsToPrice checklistPrice =
@@ -185,6 +186,7 @@ module Checklist =
 
         return {
             Name = checklist.Name
+            TabName = TabName checklist.TabName
             Count = countedItems
             Known = recipes
             Price = pricedItems

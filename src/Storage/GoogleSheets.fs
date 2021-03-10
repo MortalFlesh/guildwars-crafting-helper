@@ -18,7 +18,6 @@ module GoogleSheets =
         Credentials: string
         Token: string
         SpreadsheetId: string
-        Tab: string
     }
 
     let private letters = [ "A"; "B"; "C"; "D"; "E"; "F"; "G"; "H"; "I"; "J"; "K"; "L"; "M"; "N"; "O"; "P"; "Q"; "R"; "S"; "T"; "U"; "V"; "W"; "X"; "Y"; "Z" ]
@@ -49,7 +48,7 @@ module GoogleSheets =
             )
         )
 
-    let private range tab fromCell toCell =
+    let private range (TabName tab) fromCell toCell =
         sprintf "%s!%s:%s" tab fromCell toCell
 
     let private range2 tab (fromLetter, fromNumber) (toLetter, toNumber) =
@@ -63,6 +62,19 @@ module GoogleSheets =
     let private idata<'a> (values: 'a list): IList<'a> =
         values |> data :> IList<'a>
 
+    let private valuesRangeStatic tab fromCell toCell (values: _ list list) =
+        let toObj a = a :> obj
+
+        let values =
+            values
+            |> List.map (List.map toObj >> idata)
+            |> data
+
+        ValueRange (
+            Range = range tab fromCell toCell,
+            Values = values
+        )
+
     let private valuesRange tab (startLetter, startNumber) (values: _ list list) =
         let toLetter =
             let toLetterIndex =
@@ -73,23 +85,38 @@ module GoogleSheets =
 
             letters.[toLetterIndex - 1]
 
-        let toObj a = a :> obj
+        let toNumber = startNumber + values.Length - 1
 
-        let range = range2 tab (startLetter, startNumber) (toLetter, startNumber + values.Length - 1)
-        let values =
-            values
-            |> List.map (List.map toObj >> idata)
-            |> data
-
-        ValueRange (
-            Range = range,
-            Values = values
-        )
+        values
+        |> valuesRangeStatic tab (sprintf "%s%d" startLetter startNumber) (sprintf "%s%d" toLetter toNumber)
 
     let private logError context (e: exn) =
         eprintfn "[GoogleSheets][%s] %s\n%A" context e.Message e
 
-    let private saveItems config (serialize: _ -> string) = function
+    /// From "D2:D27" to ("D", 2)
+    let private rangeStartFromString (range: string) =
+        let range =
+            match range.Split ":" with
+            | [| range; _  |] -> range
+            | _ -> failwithf "Invalid format of range %A" range
+
+        let letter = range.[0] |> string
+        let number = range.[1..] |> int
+
+        letter, number
+
+    let private batchUpdateSheets (client: SheetsService) spreadsheetId (valuesRange: ValueRange) =
+        let requestBody =
+            BatchUpdateValuesRequest(
+                ValueInputOption = "USER_ENTERED",
+                Data = data [ valuesRange ]
+            )
+
+        let request = client.Spreadsheets.Values.BatchUpdate(requestBody, spreadsheetId)
+
+        request.Execute() |> ignore
+
+    let private saveItems config (serialize: _ -> string) tabName = function
         | [] -> ()
         | items ->
             try
@@ -102,27 +129,19 @@ module GoogleSheets =
                         | [] -> None
                         | values -> Some values
                     )
-                    |> valuesRange config.Tab ("A", 2)
+                    |> valuesRange tabName ("A", 2)
 
                 use service = createClient config
 
-                let requestBody =
-                    BatchUpdateValuesRequest(
-                        ValueInputOption = "USER_ENTERED",
-                        Data = data [ valuesRange ]
-                    )
-
-                let request = service.Spreadsheets.Values.BatchUpdate(requestBody, config.SpreadsheetId)
-
-                request.Execute() |> ignore
+                valuesRange |> batchUpdateSheets service config.SpreadsheetId
 
             with e -> e |> logError "Save"
 
-    let private loadItems config parse () =
+    let private loadItems config parse tab () =
         try
             use service = createClient config
 
-            let request = service.Spreadsheets.Values.Get(config.SpreadsheetId, range config.Tab "A2" "M100")
+            let request = service.Spreadsheets.Values.Get(config.SpreadsheetId, range tab "A2" "M100")
             let response = request.Execute()
             let values = response.Values
 
@@ -141,11 +160,42 @@ module GoogleSheets =
             e |> logError "Load"
             []
 
-    let private clear config () =
+    let clear config tab fromCell toCell =
         try
             use service = createClient config
 
-            let request = service.Spreadsheets.Values.Clear(ClearValuesRequest(), config.SpreadsheetId, range config.Tab "A2" "M100")
+            let request = service.Spreadsheets.Values.Clear(ClearValuesRequest(), config.SpreadsheetId, range tab fromCell toCell)
             request.Execute() |> ignore
 
         with e -> e |> logError "Clear"
+
+    let updateSheets log config (updateData: UpdateData) = asyncResult {
+        use client = createClient config
+
+        let updateSheetsByData spreadsheetId listName data =
+            data
+            |> List.iter (fun (range: string, values) ->
+                log <| sprintf "Update range %A ..." range
+
+                let fromCell, toCell =
+                    match range.Split ":" with
+                    | [| cell |] -> cell, cell
+                    | [| fromCell; toCell |] -> fromCell, toCell
+                    | _ -> failwithf "Invalid range %A - expected \"From:To\"" range
+
+                values
+                |> valuesRangeStatic listName fromCell toCell
+                |> batchUpdateSheets client spreadsheetId
+            )
+
+        match updateData with
+        | UpdateData.String { SpreadsheetId = spreadsheetId; ListName = listName; Data = data } ->
+            data
+            |> updateSheetsByData spreadsheetId listName
+
+        | UpdateData.Float { SpreadsheetId = spreadsheetId; ListName = listName; Data = data } ->
+            data
+            |> updateSheetsByData spreadsheetId listName
+
+        return ()
+    }
