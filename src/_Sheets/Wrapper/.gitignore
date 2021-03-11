@@ -1,7 +1,0 @@
-vendor/
-
-# create in the google console - https://console.cloud.google.com/apis/credentials
-credentials.json
-
-# this will be created automatically in the app (by api-client)
-token.json
