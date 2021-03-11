@@ -1,0 +1,918 @@
+{
+  "name": "Mortal Flesh God",
+  "race": "Sylvari",
+  "gender": "Male",
+  "flags": [],
+  "profession": "Elementalist",
+  "level": 80,
+  "guild": "id",
+  "age": 3430713,
+  "created": "2012-08-28T17:23:00Z",
+  "deaths": 3547,
+  "crafting": [
+    {
+      "discipline": "Artificer",
+      "rating": 37,
+      "active": false
+    },
+    {
+      "discipline": "Jeweler",
+      "rating": 400,
+      "active": true
+    },
+    {
+      "discipline": "Tailor",
+      "rating": 500,
+      "active": true
+    },
+    {
+      "discipline": "Weaponsmith",
+      "rating": 167,
+      "active": false
+    }
+  ],
+  "title": 10,
+  "backstory": [
+    "7-54",
+    "30-136",
+    "31-137",
+    "32-142",
+    "186-160"
+  ],
+  "equipment": [
+    {
+      "id": 68357,
+      "slot": "HelmAquatic",
+      "upgrades": [
+        24836
+      ],
+      "stats": {
+        "id": 161,
+        "attributes": {
+          "Power": 60,
+          "Precision": 43,
+          "CritDamage": 43
+        }
+      },
+      "binding": "Character",
+      "bound_to": "Mortal Flesh God"
+    },
+    {
+      "id": 39136,
+      "slot": "Backpack",
+      "skin": 6561,
+      "binding": "Account",
+      "dyes": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "id": 48079,
+      "slot": "Coat",
+      "upgrades": [
+        24836
+      ],
+      "infusions": [
+        43254
+      ],
+      "skin": 490,
+      "binding": "Account",
+      "dyes": [
+        19,
+        1380,
+        1553,
+        1354
+      ]
+    },
+    {
+      "id": 48132,
+      "slot": "Boots",
+      "upgrades": [
+        24836
+      ],
+      "infusions": [
+        43254
+      ],
+      "skin": 530,
+      "binding": "Account",
+      "dyes": [
+        1550,
+        1550,
+        1354,
+        1553
+      ]
+    },
+    {
+      "id": 83162,
+      "slot": "Gloves",
+      "upgrades": [
+        24836
+      ],
+      "infusions": [
+        43254
+      ],
+      "skin": 6700,
+      "stats": {
+        "id": 753,
+        "attributes": {
+          "Power": 34,
+          "Precision": 47,
+          "CritDamage": 34
+        }
+      },
+      "binding": "Account",
+      "dyes": [
+        362,
+        362,
+        362,
+        1380
+      ]
+    },
+    {
+      "id": 48081,
+      "slot": "Helm",
+      "upgrades": [
+        24836
+      ],
+      "infusions": [
+        43254
+      ],
+      "skin": 1025,
+      "binding": "Account",
+      "dyes": [
+        1308,
+        1233,
+        480,
+        480
+      ]
+    },
+    {
+      "id": 48082,
+      "slot": "Leggings",
+      "upgrades": [
+        24836
+      ],
+      "infusions": [
+        43254
+      ],
+      "skin": 515,
+      "binding": "Account",
+      "dyes": [
+        48,
+        1380,
+        1553,
+        1354
+      ]
+    },
+    {
+      "id": 83595,
+      "slot": "Shoulders",
+      "upgrades": [
+        24836
+      ],
+      "infusions": [
+        43254
+      ],
+      "skin": 518,
+      "stats": {
+        "id": 753,
+        "attributes": {
+          "Power": 34,
+          "Precision": 47,
+          "CritDamage": 34
+        }
+      },
+      "binding": "Account",
+      "dyes": [
+        48,
+        1380,
+        1553,
+        1354
+      ]
+    },
+    {
+      "id": 75187,
+      "slot": "Ring2",
+      "infusions": [
+        43254,
+        43254
+      ],
+      "binding": "Account"
+    },
+    {
+      "id": 93940,
+      "slot": "Amulet",
+      "infusions": [
+        93953
+      ],
+      "stats": {
+        "id": 584,
+        "attributes": {
+          "Power": 157,
+          "Precision": 108,
+          "CritDamage": 108
+        }
+      },
+      "binding": "Account"
+    },
+    {
+      "id": 13990,
+      "slot": "WeaponAquaticA",
+      "upgrades": [
+        24658,
+        24580
+      ],
+      "binding": "Character",
+      "bound_to": "Mortal Flesh God"
+    },
+    {
+      "id": 30930,
+      "slot": "WeaponA1",
+      "skin": 7300,
+      "binding": "Account"
+    },
+    {
+      "id": 31045,
+      "slot": "WeaponA2",
+      "upgrades": [
+        24572
+      ],
+      "binding": "Character",
+      "bound_to": "Mortal Flesh God"
+    },
+    {
+      "id": 47095,
+      "slot": "WeaponB1",
+      "upgrades": [
+        24578
+      ],
+      "skin": 8840,
+      "stats": {
+        "id": 161,
+        "attributes": {
+          "Power": 239,
+          "Precision": 171,
+          "CritDamage": 171
+        }
+      },
+      "binding": "Character",
+      "bound_to": "Mortal Flesh God"
+    },
+    {
+      "id": 87396,
+      "slot": "Sickle",
+      "binding": "Account"
+    },
+    {
+      "id": 87420,
+      "slot": "Axe",
+      "binding": "Account"
+    },
+    {
+      "id": 87443,
+      "slot": "Pick",
+      "binding": "Account"
+    }
+  ],
+  "recipes": [
+    1,
+    3,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "bags": [
+    {
+      "id": 8932,
+      "size": 20,
+      "inventory": [
+        {
+          "id": 19575,
+          "count": 5,
+          "binding": "Character",
+          "bound_to": "Mortal Flesh God"
+        },
+        {
+          "id": 19551,
+          "count": 4,
+          "binding": "Character",
+          "bound_to": "Mortal Flesh God"
+        },
+        {
+          "id": 19548,
+          "count": 2,
+          "binding": "Character",
+          "bound_to": "Mortal Flesh God"
+        },
+        {
+          "id": 24517,
+          "count": 1
+        },
+        {
+          "id": 24531,
+          "count": 1
+        },
+        {
+          "id": 19620,
+          "count": 1,
+          "binding": "Character",
+          "bound_to": "Mortal Flesh God"
+        },
+        null,
+        null
+      ]
+    },
+    {
+      "id": 92307,
+      "size": 28,
+      "inventory": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    {
+      "id": 87225,
+      "size": 32,
+      "inventory": [
+        {
+          "id": 19986,
+          "count": 1,
+          "charges": 25,
+          "binding": "Account"
+        },
+        {
+          "id": 23045,
+          "count": 1,
+          "charges": 38,
+          "binding": "Account"
+        },
+        null,
+        null,
+        null,
+        null,
+        {
+          "id": 19986,
+          "count": 1,
+          "charges": 25,
+          "binding": "Account"
+        },
+        {
+          "id": 23045,
+          "count": 1,
+          "charges": 250,
+          "binding": "Account"
+        },
+        null,
+        null,
+        null,
+        null,
+        {
+          "id": 23001,
+          "count": 1,
+          "skin": 8097,
+          "binding": "Account"
+        },
+        null,
+        null,
+        null,
+        null,
+        {
+          "id": 39709,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 93407,
+          "count": 17,
+          "binding": "Account"
+        },
+        {
+          "id": 93539,
+          "count": 2,
+          "binding": "Account"
+        },
+        null,
+        null,
+        null,
+        {
+          "id": 39707,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 92014,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 86142,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 48717,
+          "count": 1
+        },
+        {
+          "id": 94595,
+          "count": 4,
+          "binding": "Account"
+        },
+        {
+          "id": 72500,
+          "count": 2,
+          "binding": "Account"
+        },
+        {
+          "id": 39706,
+          "count": 2,
+          "binding": "Account"
+        },
+        {
+          "id": 85987,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 86217,
+          "count": 1,
+          "binding": "Account"
+        }
+      ]
+    },
+    {
+      "id": 83297,
+      "size": 24,
+      "inventory": [
+        {
+          "id": 79744,
+          "count": 1,
+          "binding": "Character",
+          "bound_to": "Mortal Flesh God"
+        },
+        {
+          "id": 83305,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 68110,
+          "count": 17,
+          "binding": "Account"
+        },
+        {
+          "id": 83008,
+          "count": 2
+        },
+        {
+          "id": 84731,
+          "count": 9
+        },
+        {
+          "id": 85016,
+          "count": 23
+        },
+        {
+          "id": 88660,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 81780,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 77093,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 73718,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 67270,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 69887,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 68377,
+          "count": 1,
+          "binding": "Account"
+        },
+        null,
+        null,
+        {
+          "id": 92115,
+          "count": 4,
+          "binding": "Account"
+        },
+        {
+          "id": 20002,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 38050,
+          "count": 8,
+          "binding": "Account"
+        },
+        {
+          "id": 43766,
+          "count": 23,
+          "binding": "Account"
+        },
+        {
+          "id": 20323,
+          "count": 132
+        },
+        {
+          "id": 41741,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 45003,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 20003,
+          "count": 10,
+          "binding": "Account"
+        },
+        {
+          "id": 92195,
+          "count": 2,
+          "binding": "Account"
+        }
+      ]
+    },
+    {
+      "id": 9574,
+      "size": 20,
+      "inventory": [
+        {
+          "id": 92108,
+          "count": 1,
+          "binding": "Account"
+        },
+        null,
+        {
+          "id": 41569,
+          "count": 6
+        },
+        {
+          "id": 12486,
+          "count": 4
+        },
+        {
+          "id": 77643,
+          "count": 23
+        },
+        {
+          "id": 67368,
+          "count": 20
+        },
+        {
+          "id": 79031,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 82910,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 84450,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 8884,
+          "count": 5
+        },
+        {
+          "id": 43451,
+          "count": 7
+        },
+        {
+          "id": 77569,
+          "count": 75
+        },
+        {
+          "id": 84479,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 93659,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 93605,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 81940,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 73232,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 86205,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 82559,
+          "count": 2,
+          "binding": "Account"
+        },
+        {
+          "id": 84196,
+          "count": 1,
+          "binding": "Account"
+        }
+      ]
+    },
+    {
+      "id": 9589,
+      "size": 18,
+      "inventory": [
+        {
+          "id": 13906,
+          "count": 1,
+          "skin": 4576,
+          "upgrades": [
+            24614
+          ],
+          "upgrade_slot_indices": [
+            0
+          ],
+          "binding": "Character",
+          "bound_to": "Mortal Flesh God"
+        },
+        {
+          "id": 67148,
+          "count": 1,
+          "skin": 530,
+          "upgrades": [
+            24836
+          ],
+          "upgrade_slot_indices": [
+            0
+          ],
+          "infusions": [
+            43254
+          ],
+          "dyes": [
+            51,
+            1380,
+            1354,
+            1553
+          ],
+          "binding": "Account",
+          "stats": {
+            "id": 161,
+            "attributes": {
+              "Power": 47,
+              "Precision": 34,
+              "CritDamage": 34
+            }
+          }
+        },
+        {
+          "id": 39233,
+          "count": 1,
+          "infusions": [
+            39336
+          ],
+          "binding": "Account"
+        },
+        null,
+        {
+          "id": 82913,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 67198,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 71561,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 46002,
+          "count": 1,
+          "skin": 3852,
+          "upgrades": [
+            24624,
+            24573
+          ],
+          "upgrade_slot_indices": [
+            0,
+            1
+          ],
+          "binding": "Character",
+          "bound_to": "Mortal Flesh God"
+        },
+        {
+          "id": 93336,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 92383,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 88712,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 67211,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 72872,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 71130,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 67340,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 87517,
+          "count": 6,
+          "binding": "Account"
+        },
+        {
+          "id": 19229,
+          "count": 4,
+          "binding": "Character",
+          "bound_to": "Mortal Flesh God"
+        },
+        {
+          "id": 69816,
+          "count": 1,
+          "binding": "Account"
+        }
+      ]
+    },
+    {
+      "id": 9589,
+      "size": 18,
+      "inventory": [
+        {
+          "id": 66985,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 66988,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 19173,
+          "count": 1
+        },
+        {
+          "id": 19996,
+          "count": 13,
+          "binding": "Account"
+        },
+        {
+          "id": 20030,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 67280,
+          "count": 25,
+          "binding": "Account"
+        },
+        {
+          "id": 77447,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 78846,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 84335,
+          "count": 90,
+          "binding": "Account"
+        },
+        {
+          "id": 87630,
+          "count": 214,
+          "binding": "Account"
+        },
+        {
+          "id": 20017,
+          "count": 11,
+          "binding": "Account"
+        },
+        {
+          "id": 19984,
+          "count": 10,
+          "binding": "Account"
+        },
+        {
+          "id": 77379,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 78920,
+          "count": 1,
+          "binding": "Account"
+        },
+        {
+          "id": 83886,
+          "count": 70,
+          "binding": "Account"
+        },
+        {
+          "id": 67826,
+          "count": 10,
+          "binding": "Account"
+        },
+        {
+          "id": 20018,
+          "count": 6,
+          "binding": "Account"
+        },
+        {
+          "id": 19992,
+          "count": 10,
+          "binding": "Account"
+        }
+      ]
+    }
+  ]
+}

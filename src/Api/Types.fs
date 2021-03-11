@@ -145,14 +145,32 @@ type Checklist = {
 
 type ApiKey = ApiKey of string
 
+type CharacterName = CharacterName of string
+
+type Rarity =
+    | Lower
+    | Fine
+    | Masterwork
+    | Rare
+    | Exotic
+    | Ascended
+    | Legendary
+
+type Binding =
+    | AccountBound
+    | SoulBound of CharacterName
+    | Unbound
+
 type ItemInfo = {
     Id: int
     Name: string
+    Rarity: Rarity
 }
 
 type InventoryItem = {
     Id: int
     Count: int
+    Binding: Binding
 }
 
 type Inventory = InventoryItem list
@@ -170,8 +188,150 @@ module CurrencyItem =
 // Domain
 // ===========================
 
-type PricedBankItem = {
+[<RequireQualifiedAccess>]
+module CharacterName =
+    let value (CharacterName name) = name
+
+type ItemWithInfo = {
+    ItemInfo: ItemInfo
+    InventoryItem: InventoryItem
+}
+
+type ItemWithInfoAndPrice = {
     ItemInfo: ItemInfo
     InventoryItem: InventoryItem
     Price: float
 }
+
+type RawEquipmentInfo = {
+    Id: int
+    Slot: string
+    Upgrades: int list
+    Infusions: int list
+    Binding: Binding
+    // todo - stats, dyes, skin,
+}
+
+type FullItem = {
+    Id: int
+    Name: string
+    Count: int
+    Price: float option
+    TotalPrice: float option
+    Rarity: Rarity
+    Upgrades: FullItem list
+    Infusions: FullItem list
+    Binding: Binding
+    // todo - stats, dyes, skin,
+}
+
+type Character = {
+    Name: CharacterName
+    Inventory: Bag list
+    Equipment: Equipment
+}
+
+and Bag = {
+    Info: FullItem
+    Size: int
+    Inventory: FullItem list
+}
+
+and Equipment = {
+    Head: FullItem option
+    Shoulders: FullItem option
+    Chest: FullItem option
+    Hands: FullItem option
+    Legs: FullItem option
+    Feet: FullItem option
+
+    Back: FullItem option
+    Trinket1: FullItem option
+    Trinket2: FullItem option
+    Amulet: FullItem option
+    Ring1: FullItem option
+    Ring2: FullItem option
+
+    WeaponA1: FullItem option
+    WeaponA2: FullItem option
+    WeaponB1: FullItem option
+    WeaponB2: FullItem option
+}
+
+[<RequireQualifiedAccess>]
+module Rarity =
+    let parse = function
+        | "Legendary" -> Legendary
+        | "Ascended" -> Ascended
+        | "Exotic" -> Exotic
+        | "Rare" -> Rare
+        | "Masterwork" -> Masterwork
+        | "Fine" -> Fine
+        | _ -> Lower
+
+    let value = function
+        | Legendary -> "(leg)"
+        | Ascended -> "(asc)"
+        | Exotic -> "(exo)"
+        | Rare -> "(rar)"
+        | Masterwork -> "(mas)"
+        | Fine -> "(fin)"
+        | _ -> ""
+
+[<RequireQualifiedAccess>]
+module Binding =
+    let parse = function
+        | (Some "Character", Some bindTo) -> SoulBound (CharacterName bindTo)
+        | (Some "Account", _) -> AccountBound
+        | _ -> Unbound
+
+[<RequireQualifiedAccess>]
+module Bag =
+    let inventory ({ Inventory = inventory }: Bag) = inventory
+
+[<RequireQualifiedAccess>]
+module Equipment =
+    let empty = {
+        Head = None
+        Shoulders = None
+        Chest = None
+        Hands = None
+        Legs = None
+        Feet = None
+
+        Back = None
+        Trinket1 = None
+        Trinket2 = None
+        Amulet = None
+        Ring1 = None
+        Ring2 = None
+
+        WeaponA1 = None
+        WeaponA2 = None
+        WeaponB1 = None
+        WeaponB2 = None
+    }
+
+    let private items (equipment: Equipment): FullItem list =
+        [
+            yield! equipment.Head |> Option.toList
+            yield! equipment.Shoulders |> Option.toList
+            yield! equipment.Chest |> Option.toList
+            yield! equipment.Hands |> Option.toList
+            yield! equipment.Legs |> Option.toList
+            yield! equipment.Feet |> Option.toList
+
+            yield! equipment.Back |> Option.toList
+            yield! equipment.Trinket1 |> Option.toList
+            yield! equipment.Trinket2 |> Option.toList
+            yield! equipment.Amulet |> Option.toList
+            yield! equipment.Ring1 |> Option.toList
+            yield! equipment.Ring2 |> Option.toList
+
+            yield! equipment.WeaponA1 |> Option.toList
+            yield! equipment.WeaponA2 |> Option.toList
+            yield! equipment.WeaponB1 |> Option.toList
+            yield! equipment.WeaponB2 |> Option.toList
+        ]
+
+    let count = items >> List.length

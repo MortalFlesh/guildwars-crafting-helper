@@ -38,7 +38,19 @@ let main argv =
             Execute = Command.Bank.execute
         }
 
-        // todo - character inventories prices
+        command "gw:characters" {
+            Description = "Inspect all characters for equipment and inventories."
+            Help = None
+            Arguments = [
+                Argument.optionalArray "characters" "A list of characters (part of the name) which you want to update. If none given, all of them will be updated." (Some [])
+            ]
+            Options = [
+                Option.optional "config" (Some "c") "A file with a configuration." (Some ".gw.json")
+            ]
+            Initialize = None
+            Interact = None
+            Execute = Command.Characters.execute
+        }
 
         command "about" {
             Description = "Displays information about the current project."

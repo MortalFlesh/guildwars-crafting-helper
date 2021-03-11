@@ -29,7 +29,7 @@ module Checklist =
 
         output.SubTitle "Fetching inventories ..."
         let! inventoryItems =
-            GuildWars.fetchCharacters apiKey
+            GuildWars.fetchCharactersInventories apiKey
             |> Cache.fetchWithCache output itemsCache "characters"
 
         output.SubTitle "Fetching trading post delivery ..."

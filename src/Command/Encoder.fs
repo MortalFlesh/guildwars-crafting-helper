@@ -49,14 +49,38 @@ module Encode =
     let private floatToString (float: float) =
         float |> string |> (fun s -> s.Replace(".", ","))
 
-    let encodeItemNames data (item: PricedBankItem) =
+    let encodeItemNames data (item: ItemWithInfoAndPrice) =
         [item.ItemInfo.Name] :: data
 
-    let encodeItemCount data (item: PricedBankItem) =
+    let encodeItemCount data (item: ItemWithInfoAndPrice) =
         [item.InventoryItem.Count |> string] :: data
 
-    let encodePricePerPiece data (item: PricedBankItem) =
+    let encodePricePerPiece data (item: ItemWithInfoAndPrice) =
         [item.Price |> floatToString] :: data
 
-    let encodeTotalPrice data (item: PricedBankItem) =
+    let encodeTotalPrice data (item: ItemWithInfoAndPrice) =
         [item.Price * (float item.InventoryItem.Count) |> floatToString] :: data
+
+    [<RequireQualifiedAccess>]
+    module ItemWithInfo =
+        let encodeName data (item: ItemWithInfo) =
+            [item.ItemInfo.Name] :: data
+
+        let encodeCount data (item: ItemWithInfo) =
+            [item.InventoryItem.Count |> string] :: data
+
+    [<RequireQualifiedAccess>]
+    module FullItem =
+        let encodeName data (item: FullItem) =
+            [ (sprintf "%s %s" item.Name (item.Rarity |> Rarity.value)).Trim ' ' ] :: data
+
+        let encodeCount data (item: FullItem) =
+            [item.Count |> string] :: data
+
+        let private priceToItem price = [ price |> Option.map floatToString |> Option.defaultValue "" ]
+
+        let encodePrice data (item: FullItem) =
+            (item.Price |> priceToItem) :: data
+
+        let encodeTotalPrice data (item: FullItem) =
+            (item.TotalPrice |> priceToItem) :: data
