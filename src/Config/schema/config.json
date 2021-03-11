@@ -1,0 +1,12 @@
+[
+    {
+        "guildWars": {
+            "apiKey": "...token..."
+        },
+        "googleSheets": {
+            "credentials": "/path/credentials.json",
+            "token": "/path/token.json",
+            "spreadsheetId": "[spreadsheetId]"
+        }
+    }
+]

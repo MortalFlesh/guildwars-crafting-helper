@@ -1,3 +1,5 @@
+data/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -9,6 +11,13 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+AssemblyInfo.fs
+
+!bin/tests
+!bin/console
+
+# ionide
+.ionide/
 
 # Paket dependency manager
 .paket/paket.exe
@@ -17,8 +26,12 @@ paket-files/
 # FAKE - F# Make
 .fake/
 
+# application
+dist
+credentials/
+credentials.json
+token.json/
+
 # Local files
 .env
-.check.json
-src/ApiProvider/Authorization.fs
-src/Sheets/data/*.json
+.gw.json
