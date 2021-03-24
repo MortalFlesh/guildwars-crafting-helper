@@ -2,6 +2,8 @@
 
 <!-- There is always Unreleased section on the top. Subsections (Add, Changed, Fix, Removed) should be Add as needed. -->
 ## Unreleased
+
+## 1.1.0 - 2021-03-24
 - Add `gw:characters` command
 - Add Wallet currencies to bank command
 
