@@ -20,7 +20,35 @@ module GoogleSheets =
         SpreadsheetId: string
     }
 
-    let private letters = [ "A"; "B"; "C"; "D"; "E"; "F"; "G"; "H"; "I"; "J"; "K"; "L"; "M"; "N"; "O"; "P"; "Q"; "R"; "S"; "T"; "U"; "V"; "W"; "X"; "Y"; "Z" ]
+    let private letters =
+        let baseLetters = [ "A"; "B"; "C"; "D"; "E"; "F"; "G"; "H"; "I"; "J"; "K"; "L"; "M"; "N"; "O"; "P"; "Q"; "R"; "S"; "T"; "U"; "V"; "W"; "X"; "Y"; "Z" ]
+
+        [
+            yield! baseLetters
+            yield! baseLetters |> List.map ((+) "A")
+        ]
+
+    let letter i =
+        if i > letters.Length then failwithf "[Sheets] Letter index %A is out of bound." i
+        letters.[i]
+
+    let letterNumber letter =
+        match letters |> List.tryFindIndex ((=) letter) with
+        | Some i -> i
+        | _ -> failwithf "[Sheets] Letter %A is out of bound." letter
+
+    let letterMoveBy length i (cellLetter: string) =
+        if i <= 0 then cellLetter
+        else
+            let letterNumber = cellLetter |> letterNumber
+            letterNumber + i * length |> letter
+
+    let rangeMoveBy length i (range: string) =
+        if i <= 0 then range
+        else
+            let letter = string range.[0] |> letterMoveBy length i
+            let number = int range.[1..]
+            sprintf "%s%d" letter number
 
     let private createClient config =
         let scopes = [ SheetsService.Scope.Spreadsheets ]
@@ -156,7 +184,7 @@ module GoogleSheets =
                 |> Seq.choose parse
                 |> Seq.toList
 
-        with e ->
+        with e ->   
             e |> logError "Load"
             []
 

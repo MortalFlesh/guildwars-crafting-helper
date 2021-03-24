@@ -129,5 +129,5 @@ module ChecklistParser =
             Count = count
             Known = known
             Price = price
-            Currency = currency
+            CurrencyCell = currency
         }

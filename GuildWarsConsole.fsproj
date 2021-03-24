@@ -34,13 +34,20 @@
     <Compile Include="src/Command/Types.fs" />
     <Compile Include="src/Command/Encoder.fs" />
 
+    <!-- Check Command -->
     <Compile Include="src/Command/CheckCommand/ChecklistParser.fs" />
     <Compile Include="src/Command/CheckCommand/Checklist.fs" />
     <Compile Include="src/Command/CheckCommand/Encoder.fs" />
     <Compile Include="src/Command/CheckCommand/CheckCommand.fs" />
 
+    <!-- Bank Command -->
     <Compile Include="src/Command/BankCommand/Encoder.fs" />
     <Compile Include="src/Command/BankCommand/BankCommand.fs" />
+
+    <!-- Characters Command -->
+    <Compile Include="src/Command/CharactersCommand/Types.fs" />
+    <Compile Include="src/Command/CharactersCommand/Encoder.fs" />
+    <Compile Include="src/Command/CharactersCommand/CharactersCommand.fs" />
   </ItemGroup>
 
   <ItemGroup>

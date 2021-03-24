@@ -47,3 +47,49 @@ module BankEncoder =
             ListName = listName
             Data = data |> List.rev
         }
+
+    let encodeCurrencies spreadsheetId listName startingCell (currencies: Wallet) =
+        let range totalItems =
+            let cell = startingCell
+            sprintf "%s:%s"
+                (cell |> Cell.exactValue)
+                ({cell with
+                    Letter = cell.Letter |> GoogleSheets.letterMoveBy 3 1
+                    Number = cell.Number + (totalItems)
+                } |> Cell.exactValue)
+
+        let currency name =
+            currencies
+            |> List.tryFind (Currency.name >> (=) name)
+            |> Option.map (Currency.amount >> Encode.floatToString)
+            |> Option.defaultValue ""
+
+        let data = [
+            [ "" ] // Obsidian Shards
+            [ "100"; "2,2"; "300" ] // Mystic coin
+            [ "" ] // Stabilizing Matrix
+            [ currency Karma ]
+            [ currency PvPLeagueTicket ]
+            [ currency AscendedShardOfGlory ]
+            [ "" ]  // Shard of Glory
+            [ currency Laurel ]
+            [ currency Gold ]
+            [ currency AirshipPart ]
+            [ currency LumpOfAurilium ]
+            [ currency LeyLineCrystal ]
+            [ currency UnboundMagic ]
+            [ "" ] // Memory of Battle (WvW)
+            [ currency WvWSkirmishClaimTicket ]
+            [ currency ElegyMosaic ]
+            [ currency TradeContract ]
+            [ currency VolatileMagic ]
+            [ currency SpiritShard ]
+        ]
+
+        UpdateData.String {
+            SpreadsheetId = spreadsheetId
+            ListName = listName
+            Data = [
+                range (data |> List.length), data
+            ]
+        }

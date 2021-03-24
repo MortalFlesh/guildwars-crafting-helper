@@ -15,7 +15,7 @@ module CheckListEncoder =
             |> foldEncode Encode.encodeItemWithCount preparedChecklist.Count
             |> foldEncode Encode.encodeItemWithPrice preparedChecklist.Price
             |> foldEncode Encode.encodeKnownRecipe preparedChecklist.Known
-            |> foldEncode Encode.encodeCurrency preparedChecklist.Currency
+            |> foldEncode Encode.encodeCurrencyCell preparedChecklist.CurrencyCell
             |> List.rev
 
         UpdateData.Float {

@@ -66,12 +66,12 @@ type ItemWithPrice =
     | Many of PricedItemList
 
 // ===========================
-// Currency
+// CurrencyCell
 // ===========================
 
-type CurrencyWithAmount = {
-    Currency: Currency
-    Amount: int
+type CurrencyCellWithAmount = {
+    CurrencyCell: CurrencyCell
+    Amount: float
 }
 
 // ===========================
@@ -85,5 +85,5 @@ type PreparedChecklist = {
     Known: Recipe list
     Price: ItemWithPrice list
     IdsToPrice: int list
-    Currency: CurrencyWithAmount list // todo
+    CurrencyCell: CurrencyCellWithAmount list // todo
 }
