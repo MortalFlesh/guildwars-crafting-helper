@@ -41,33 +41,33 @@ module Encode =
                 )
             (cell, prices) :: data
 
-    let encodeCurrency data (currency: CurrencyWithAmount) =
-        let cell = currency.Currency.Cell |> Cell.Single |> Cell.value
-        let amount = [[currency.Amount |> float]]
+    let encodeCurrencyCell data (currency: CurrencyCellWithAmount) =
+        let cell = currency.CurrencyCell.Cell |> Cell.Single |> Cell.value
+        let amount = [[ currency.Amount ]]
         (cell, amount) :: data
 
-    let private floatToString (float: float) =
+    let floatToString (float: float) =
         float |> string |> (fun s -> s.Replace(".", ","))
 
     let encodeItemNames data (item: ItemWithInfoAndPrice) =
-        [item.ItemInfo.Name] :: data
+        [ if item.ItemInfo.Name.StartsWith "+" then sprintf " %s" item.ItemInfo.Name else item.ItemInfo.Name ] :: data
 
     let encodeItemCount data (item: ItemWithInfoAndPrice) =
-        [item.InventoryItem.Count |> string] :: data
+        [ item.InventoryItem.Count |> string ] :: data
 
     let encodePricePerPiece data (item: ItemWithInfoAndPrice) =
-        [item.Price |> floatToString] :: data
+        [ item.Price |> floatToString ] :: data
 
     let encodeTotalPrice data (item: ItemWithInfoAndPrice) =
-        [item.Price * (float item.InventoryItem.Count) |> floatToString] :: data
+        [ item.Price * (float item.InventoryItem.Count) |> floatToString ] :: data
 
     [<RequireQualifiedAccess>]
     module ItemWithInfo =
         let encodeName data (item: ItemWithInfo) =
-            [item.ItemInfo.Name] :: data
+            [ item.ItemInfo.Name ] :: data
 
         let encodeCount data (item: ItemWithInfo) =
-            [item.InventoryItem.Count |> string] :: data
+            [ item.InventoryItem.Count |> string ] :: data
 
     [<RequireQualifiedAccess>]
     module FullItem =
@@ -75,7 +75,7 @@ module Encode =
             [ (sprintf "%s %s" item.Name (item.Rarity |> Rarity.value)).Trim ' ' ] :: data
 
         let encodeCount data (item: FullItem) =
-            [item.Count |> string] :: data
+            [ item.Count |> string ] :: data
 
         let private priceToItem price = [ price |> Option.map floatToString |> Option.defaultValue "" ]
 

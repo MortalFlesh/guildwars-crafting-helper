@@ -171,16 +171,16 @@ module Checklist =
             |> List.map (priceItem getPriceById)
 
         let currencies =
-            checklist.Currency
+            checklist.CurrencyCell
             |> List.map (fun currency ->
                 {
-                    Currency = currency
+                    CurrencyCell = currency
                     Amount =
                         currencies
                         |> List.tryFind (fun c -> c.Id = currency.Id)
                         |> function
-                            | Some currency -> currency |> CurrencyItem.getAmount
-                            | None -> 0
+                            | Some currency -> currency |> Currency.amount
+                            | None -> 0.0
                 }
             )
 
@@ -191,6 +191,6 @@ module Checklist =
             Known = recipes
             Price = pricedItems
             IdsToPrice = idsToPrice
-            Currency = currencies
+            CurrencyCell = currencies
         }
     }

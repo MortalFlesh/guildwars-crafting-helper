@@ -46,6 +46,12 @@ module Bank =
             )
             |> output.Options "Bank items (top 10 most expensive items)"
 
+            output.Section "Fetching Wallet"
+            let! wallet =
+                config.ApiKey
+                |> GuildWars.fetchWallet <@> List.singleton
+                >>* (List.length >> sprintf "Fetched %A currencies" >> output.Success)
+
             output.Section "Update sheets"
             GoogleSheets.clear config.GoogleSheets (TabName "Bank") "A2" "D400"
 
@@ -56,6 +62,12 @@ module Bank =
             do!
                 pricedItems
                 |> BankEncoder.encodeItems config.GoogleSheets.SpreadsheetId (TabName "Bank") { Letter = "A"; Number = 2 }
+                |> GoogleSheets.updateSheets log config.GoogleSheets
+
+            do!
+                wallet
+                |> BankEncoder.encodeCurrencies config.GoogleSheets.SpreadsheetId (TabName "Bank") { Letter = "J"; Number = 2 }
+                |> tee (printfn "%A")
                 |> GoogleSheets.updateSheets log config.GoogleSheets
 
             return "Done"

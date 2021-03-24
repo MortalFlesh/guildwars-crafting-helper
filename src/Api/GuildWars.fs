@@ -112,7 +112,11 @@ module GuildWars =
         ]
         |> AsyncResult.ofParallelAsyncResults (sprintf "Fetching bank failed:\n%A") <!> List.concat
 
-    let fetchWallet apiKey = asyncResult {
+    /// Recalculate to gold 12345 -> 1.2345 G
+    let toGold value =
+        (value |> int |> float) / 10000.0
+
+    let fetchWallet apiKey: AsyncResult<Wallet, string> = asyncResult {
         let! response =
             "account/wallet"
             |> Api.path apiKey
@@ -121,7 +125,18 @@ module GuildWars =
         return
             response
             |> WalletSchema.Parse
-            |> Seq.map (fun currency -> { Id = currency.Id; Amount = currency.Value } )
+            |> Seq.map (fun currency ->
+                let name = CurrencyName.parse currency.Id
+
+                {
+                    Id = currency.Id
+                    Name = name
+                    Amount =
+                        match name with
+                        | Gold -> currency.Value |> float |> toGold
+                        | _ -> currency.Value |> float
+                }
+            )
             |> List.ofSeq
     }
 
@@ -139,10 +154,6 @@ module GuildWars =
                 |> Seq.map (fun item -> { Id = item.Id; Count = item.Count; Binding = Unbound } )
             |> List.ofSeq
     }
-
-    /// Recalculate to gold 12345 -> 1.2345 G
-    let toGold value =
-        (value |> int |> float) / 10000.0
 
     let fetchItemPrices (ids: int list) = asyncResult {
         let! response =

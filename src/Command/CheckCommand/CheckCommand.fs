@@ -123,8 +123,8 @@ module Check =
                     |> logLines output formatPricedItem
 
                     log.Section "Wallet items"
-                    checklist.Currency
-                    |> logLines output (fun c -> sprintf "%s: %i" c.Currency.Label c.Amount)
+                    checklist.CurrencyCell
+                    |> logLines output (fun c -> sprintf "%s: %A" c.CurrencyCell.Label c.Amount)
 
                     log.Section "Encode data"
                     let encodedCheckList =

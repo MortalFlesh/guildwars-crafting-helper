@@ -117,10 +117,10 @@ module PriceableItemList =
     let getItems ({ Items = items }: PriceableItemList) = items
 
 // ---------------------------
-// Currency (from wallet)
+// CurrencyCell (from wallet)
 // ---------------------------
 
-type Currency = {
+type CurrencyCell = {
     Label: string
     Id: int
     Cell: SingleCell
@@ -136,7 +136,7 @@ type Checklist = {
     Count: ItemToCount list
     Known: Recipe list
     Price: ItemToPrice list
-    Currency: Currency list
+    CurrencyCell: CurrencyCell list
 }
 
 // ===========================
@@ -175,14 +175,108 @@ type InventoryItem = {
 
 type Inventory = InventoryItem list
 
-type CurrencyItem = {
+type CurrencyName =
+    | Gold
+    | Karma
+    | Laurel
+    | Gem
+    // Dungeons
+    | AscalonianTear | ManifestoOfTheMoletariat | DeadlyBloom | SymbolOfKoda | FlameLegionCharrCarvings
+    | FractalRelic | PristineFractalRelic
+    // WvW
+    | BadgeOfHonor | WvWSkirmishClaimTicket
+    | GuildComendation
+    | TransmutationCharge
+    // HoT
+    | AirshipPart | LeyLineCrystal | LumpOfAurilium | ExaltedKey | Machette | PactCrowbar | VialOfChak
+    | SpiritShard
+    // LWS2
+    | Geode | BanditCrest
+    // Raid
+    | MagnetiteShard
+    | ProvisionerToken
+    // PVP
+    | PvPLeagueTicket | AscendedShardOfGlory
+    // LWS3
+    | UnboundMagic
+    // PoF
+    | TradeContract | ElegyMosaic | TradersKey
+    | TestimonyOfHeroic
+    | ZephyriteLockpick
+    // LWS4
+    | VolatileMagic
+    | RacingMedailon
+    | MistbornKey
+    | FestivalToken
+    // IceBrood Saga
+    | CacheKey | RedProphetShard | GreenProphetShard | BlueProphetCrystal | BlueProphetShard | WarSupplies | TyrianDefenseSeal
+
+    | NotDefined of int
+
+[<RequireQualifiedAccess>]
+module CurrencyName =
+    let parse = function
+        | 1 -> Gold
+        | 2 -> Karma
+        | 3 -> Laurel
+        | 4 -> Gem
+        | 5 -> AscalonianTear
+        | 7 -> FractalRelic
+        | 10 -> ManifestoOfTheMoletariat
+        | 11 -> DeadlyBloom
+        | 12 -> SymbolOfKoda
+        | 13 -> FlameLegionCharrCarvings
+        | 15 -> BadgeOfHonor
+        | 16 -> GuildComendation
+        | 18 -> TransmutationCharge
+        | 19 -> AirshipPart
+        | 20 -> LeyLineCrystal
+        | 22 -> LumpOfAurilium
+        | 23 -> SpiritShard
+        | 24 -> PristineFractalRelic
+        | 25 -> Geode
+        | 26 -> WvWSkirmishClaimTicket
+        | 27 -> BanditCrest
+        | 28 -> MagnetiteShard
+        | 29 -> ProvisionerToken
+        | 30 -> PvPLeagueTicket
+        | 32 -> UnboundMagic
+        | 33 -> AscendedShardOfGlory
+        | 34 -> TradeContract
+        | 35 -> ElegyMosaic
+        | 36 -> TestimonyOfHeroic
+        | 37 -> ExaltedKey
+        | 38 -> Machette
+        | 41 -> PactCrowbar
+        | 42 -> VialOfChak
+        | 43 -> ZephyriteLockpick
+        | 44 -> TradersKey
+        | 45 -> VolatileMagic
+        | 47 -> RacingMedailon
+        | 49 -> MistbornKey
+        | 50 -> FestivalToken
+        | 51 -> CacheKey
+        | 52 -> RedProphetShard
+        | 53 -> GreenProphetShard
+        | 54 -> BlueProphetCrystal
+        | 57 -> BlueProphetShard
+        | 58 -> WarSupplies
+        | 60 -> TyrianDefenseSeal
+
+        | notDefined -> NotDefined notDefined
+
+type Currency = {
     Id: int
-    Amount: int
+    Amount: float
+    Name: CurrencyName
 }
 
 [<RequireQualifiedAccess>]
-module CurrencyItem =
-    let getAmount { Amount = amount } = amount
+module Currency =
+    let name ({ Name = name }: Currency) = name
+    let amount { Amount = amount } = amount
+
+type Wallet = Currency list
 
 // ===========================
 // Domain
