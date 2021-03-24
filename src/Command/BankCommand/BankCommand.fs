@@ -67,7 +67,6 @@ module Bank =
             do!
                 wallet
                 |> BankEncoder.encodeCurrencies config.GoogleSheets.SpreadsheetId (TabName "Bank") { Letter = "J"; Number = 2 }
-                |> tee (printfn "%A")
                 |> GoogleSheets.updateSheets log config.GoogleSheets
 
             return "Done"

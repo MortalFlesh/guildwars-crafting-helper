@@ -56,12 +56,13 @@ Then run it in terminal:
         -v|vv|vvv, --verbose  Increase the verbosity of messages
 
     Available commands:
-        about     Displays information about the current project.
-        help      Displays help for a command
-        list      Lists commands
+        about          Displays information about the current project.
+        help           Displays help for a command
+        list           Lists commands
     gw
-        gw:bank   Inspect a bank for all items and their prices.
-        gw:check  Check for resources based on checklist(s).
+        gw:bank        Inspect a bank for all items and their prices.
+        gw:characters  Inspect all characters for equipment and inventories.
+        gw:check       Check for resources based on checklist(s).
 
 ---
 ## Release
