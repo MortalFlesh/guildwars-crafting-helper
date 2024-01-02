@@ -6,7 +6,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <PackageId>MF.GuildWarsConsole</PackageId>
     <Description>Console application for help a crafting process in Guild Wars 2</Description>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <PackageProjectUrl>https://github.com/MortalFlesh/guildwars-crafting-helper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MortalFlesh/guildwars-crafting-helper.git</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
