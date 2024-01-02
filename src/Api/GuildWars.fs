@@ -193,12 +193,16 @@ module GuildWars =
             |> Map.ofSeq
     }
 
+    let fetchItemsUrl (ids: int list) =
+        ids
+        |> List.map string
+        |> String.concat ","
+        |> sprintf "%s/items?ids=%s&lang=en" Api.BaseUrl
+
     let fetchItems (ids: int list) = asyncResult {
         let! response =
             ids
-            |> List.map string
-            |> String.concat ","
-            |> sprintf "%s/items?ids=%s&lang=en" Api.BaseUrl
+            |> fetchItemsUrl
             |> Api.fetch
 
         return
@@ -246,7 +250,7 @@ module GuildWars =
         | Single
         | Bulk
 
-    let fetchPricedItems (output: MF.ConsoleApplication.Output) bulkMode (inventory: Inventory) =
+    let fetchPricedItems (output: MF.ConsoleApplication.Output) bulkMode (inventory: Inventory): AsyncResult<ItemWithInfoAndPrice list, _> =
         let teeNote f a =
             match bulkMode with
             | BulkMode.Single -> f a
@@ -269,7 +273,7 @@ module GuildWars =
                 |> Some
 
         chunks
-        |> List.map (fun items -> asyncResult {
+        |> List.map (fun (items: Inventory) -> asyncResult {
             let itemIds =
                 items
                 |> List.map (fun { Id = id } -> id)
@@ -278,7 +282,7 @@ module GuildWars =
                 itemIds
                 |> fetchItemPrices
 
-            let! itemsInfo =
+            let! (itemsInfo: Map<int, ItemInfo>) =
                 itemIds
                 |> fetchItems
 
@@ -320,7 +324,7 @@ module GuildWars =
                 items
                 |> List.map (fun { Id = id } -> id)
 
-            let! itemsInfo =
+            let! (itemsInfo: Map<int, ItemInfo>) =
                 itemIds
                 |> fetchItems
 
@@ -336,7 +340,7 @@ module GuildWars =
         |> AsyncResult.ofParallelAsyncResults (sprintf "Error while fetching bank item details: %A")
         <!> List.concat
 
-    let rec fetchFullItems (output: MF.ConsoleApplication.Output) bulkMode (equipmentInfo: Map<int, RawEquipmentInfo>) (inventory: Inventory) = asyncResult {
+    let rec fetchFullItems (output: MF.ConsoleApplication.Output) bulkMode (equipmentInfo: Map<int,  RawEquipmentInfo>) (inventory: Inventory) = asyncResult {
         let teeNote f a =
             if output.IsVerbose() then
                 match bulkMode with
@@ -387,35 +391,40 @@ module GuildWars =
                     |> List.map (fun { Id = id } -> id)
                     |> fetchItemPrices
 
-                let! itemsInfo =
+                let! (itemsInfo: Map<int, ItemInfo>) =
                     items
                     |> List.map (fun { Id = id } -> id)
                     |> fetchItems
 
                 return
                     items
-                    |> List.map (fun item ->
+                    |> List.choose (fun item ->
                         let price = prices |> Map.tryFind item.Id
-                        let info = itemsInfo.[item.Id]
-                        let binding, upgrades, infusions =
-                            match equipmentInfo.TryFind item.Id with
-                            | Some info ->
-                                info.Binding,
-                                info.Upgrades |> List.choose (fun id -> upgradesInfo |> Map.tryFind id),
-                                info.Infusions |> List.choose (fun id -> infusionsInfo |> Map.tryFind id)
-                            | _ -> Unbound, [], []
 
-                        {
-                            Id = item.Id
-                            Name = info.Name
-                            Count = item.Count
-                            Price = price
-                            TotalPrice = price |> Option.map ((*) (float item.Count))
-                            Rarity = info.Rarity
-                            Upgrades = upgrades
-                            Infusions = infusions
-                            Binding = binding
-                        }
+                        match itemsInfo |> Map.tryFind item.Id with
+                        | Some info ->
+                            let binding, upgrades, infusions =
+                                match equipmentInfo.TryFind item.Id with
+                                | Some info ->
+                                    info.Binding,
+                                    info.Upgrades |> List.choose (fun id -> upgradesInfo |> Map.tryFind id),
+                                    info.Infusions |> List.choose (fun id -> infusionsInfo |> Map.tryFind id)
+                                | _ -> Unbound, [], []
+
+                            Some {
+                                Id = item.Id
+                                Name = info.Name
+                                Count = item.Count
+                                Price = price
+                                TotalPrice = price |> Option.map ((*) (float item.Count))
+                                Rarity = info.Rarity
+                                Upgrades = upgrades
+                                Infusions = infusions
+                                Binding = binding
+                            }
+                        | _ ->
+                            output.Warning("Item info for %A not found. Try %A", item.Id, (fetchItemsUrl [item.Id]))
+                            None
                     )
             })
             |> AsyncResult.ofSequentialAsyncResults (sprintf "Error while fetching bank item details: %A")
@@ -446,7 +455,7 @@ module GuildWars =
         let equipmentData = data.Equipment |> Seq.toList
 
         subTitle "Bags items"
-        let! bagsItemsInfo =
+        let! (bagsItemsInfo: Map<int, FullItem>) =
             (
                 bagsData
                 |> List.map (fun bag ->
@@ -492,7 +501,7 @@ module GuildWars =
             |> Map.ofList
 
         subTitle "Equipment items"
-        let! equpmentItemsInfo =
+        let! (equipmentItemsInfo: Map<int, FullItem>) =
             equipmentData
             |> List.map (fun equip ->
                 { Id = equip.Id; Count = 1; Binding = (Some equip.Binding, equip.BoundTo) |> Binding.parse }
@@ -502,30 +511,33 @@ module GuildWars =
         let equipment =
             equipmentData
             |> List.fold (fun equipment item ->
-                let info = equpmentItemsInfo.[item.Id]
+                match equipmentItemsInfo |> Map.tryFind item.Id with
+                | Some info ->
+                    match item.Slot with
+                    | "Helm" -> { equipment with Head = Some info }
+                    | "Shoulders" -> { equipment with Shoulders = Some info }
+                    | "Coat" -> { equipment with Chest = Some info }
+                    | "Gloves" -> { equipment with Hands = Some info }
+                    | "Leggings" -> { equipment with Legs = Some info }
+                    | "Boots" -> { equipment with Feet = Some info }
 
-                match item.Slot with
-                | "Helm" -> { equipment with Head = Some info }
-                | "Shoulders" -> { equipment with Shoulders = Some info }
-                | "Coat" -> { equipment with Chest = Some info }
-                | "Gloves" -> { equipment with Hands = Some info }
-                | "Leggings" -> { equipment with Legs = Some info }
-                | "Boots" -> { equipment with Feet = Some info }
+                    | "Backpack" -> { equipment with Back = Some info }
+                    | "Accessory1" -> { equipment with Trinket1 = Some info }
+                    | "Accessory2" -> { equipment with Trinket2 = Some info }
+                    | "Amulet" -> { equipment with Amulet = Some info }
+                    | "Ring1" -> { equipment with Ring1 = Some info }
+                    | "Ring2" -> { equipment with Ring2 = Some info }
 
-                | "Backpack" -> { equipment with Back = Some info }
-                | "Accessory1" -> { equipment with Trinket1 = Some info }
-                | "Accessory2" -> { equipment with Trinket2 = Some info }
-                | "Amulet" -> { equipment with Amulet = Some info }
-                | "Ring1" -> { equipment with Ring1 = Some info }
-                | "Ring2" -> { equipment with Ring2 = Some info }
+                    | "WeaponA1" -> { equipment with WeaponA1 = Some info }
+                    | "WeaponA2" -> { equipment with WeaponA2 = Some info }
+                    | "WeaponB1" -> { equipment with WeaponB1 = Some info }
+                    | "WeaponB2" -> { equipment with WeaponB2 = Some info }
 
-                | "WeaponA1" -> { equipment with WeaponA1 = Some info }
-                | "WeaponA2" -> { equipment with WeaponA2 = Some info }
-                | "WeaponB1" -> { equipment with WeaponB1 = Some info }
-                | "WeaponB2" -> { equipment with WeaponB2 = Some info }
-
-                | "Sickle" | "Axe" | "Pick"
-                | _ -> equipment
+                    | "Sickle" | "Axe" | "Pick"
+                    | _ -> equipment
+                | _ ->
+                    output.Warning("Item info for %A not found. Try %A", item.Id, (fetchItemsUrl [item.Id]))
+                    equipment
 
             ) Equipment.empty
 

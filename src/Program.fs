@@ -51,15 +51,5 @@ let main argv =
             Interact = None
             Execute = Command.Characters.execute
         }
-
-        command "about" {
-            Description = "Displays information about the current project."
-            Help = None
-            Arguments = []
-            Options = []
-            Initialize = None
-            Interact = None
-            Execute = Command.Common.about
-        }
     }
     |> run argv

@@ -5,16 +5,17 @@ module ChecklistParser =
     open System.IO
     open FSharp.Data
     open MF.Api
+    open MF.ErrorHandling
 
     type private ChecklistSchema = JsonProvider<"src/Command/CheckCommand/schema/checkList.json">
 
-    let parse checklistName: Checklist =
+    let parse checklistName: Result<Checklist, string> = result {
         let checklistData =
             checklistName
             |> File.ReadAllText
             |> ChecklistSchema.Parse
 
-        let count =
+        let! count =
             checklistData.Count
             |> Seq.map (fun item ->
                 match item.Id with
@@ -26,10 +27,10 @@ module ChecklistParser =
                         }
                         Cell = item.Cell |> SingleCell.create
                     }
-                    ItemToCount.Single item
+                    Ok (ItemToCount.Single item)
                 | None ->
                     match item.Items with
-                    | [||] -> failwith "There must be Items in item list"
+                    | [||] -> Error "There must be Items in item list while counting items"
                     | items ->
                         let itemList: CountableItemList = {
                             Label = item.Label
@@ -52,9 +53,10 @@ module ChecklistParser =
                                 )
                                 |> List.ofSeq
                         }
-                        ItemToCount.Many itemList
+                        Ok (ItemToCount.Many itemList)
             )
             |> List.ofSeq
+            |> Result.sequence
 
         let known =
             checklistData.Known
@@ -70,7 +72,7 @@ module ChecklistParser =
             )
             |> List.ofSeq
 
-        let price =
+        let! price =
             checklistData.Price
             |> Seq.map (fun item ->
                 match item.Id with
@@ -82,10 +84,10 @@ module ChecklistParser =
                         }
                         Cell = item.Cell |> SingleCell.create
                     }
-                    ItemToPrice.Single item
+                    Ok (ItemToPrice.Single item)
                 | None ->
                     match item.Items with
-                    | [||] -> failwith "There must be Items in item list"
+                    | [||] -> Error "There must be Items in item list while checking price"
                     | items ->
                         let itemList: PriceableItemList = {
                             Label = item.Label
@@ -108,9 +110,10 @@ module ChecklistParser =
                                 )
                                 |> List.ofSeq
                         }
-                        ItemToPrice.Many itemList
+                        Ok (ItemToPrice.Many itemList)
             )
             |> List.ofSeq
+            |> Result.sequence
 
         let currency =
             checklistData.Currency
@@ -123,7 +126,7 @@ module ChecklistParser =
             )
             |> List.ofSeq
 
-        {
+        return {
             Name = checklistName |> Path.GetFileName
             TabName = checklistData.TabName
             Count = count
@@ -131,3 +134,4 @@ module ChecklistParser =
             Price = price
             CurrencyCell = currency
         }
+    }

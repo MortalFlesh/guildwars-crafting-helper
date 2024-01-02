@@ -13,22 +13,20 @@ module Bank =
     open MF.GuildWars.Console.Command
     open MF.GuildWars.Console.Command.BankCommand
 
-    let execute: ExecuteCommand = fun (input, output) ->
+    let execute = ExecuteAsyncResult <| fun (input, output) ->
         asyncResult {
             output.Title "Bank inspection"
 
-            let! config =
-                Config.get (input, output)
-                |> AsyncResult.ofResult
+            let! config = Config.get (input, output)
 
-            output.Section "Fething bank items"
-            let! bank =
+            output.Section "Fetching bank items"
+            let! (bank: Inventory) =
                 config.ApiKey
                 |> GuildWars.fetchBank
                 >>* (List.length >> sprintf "Fetched %A items" >> output.Success)
 
             output.Section "Fetching item details"
-            let! pricedItems =
+            let! (pricedItems: ItemWithInfoAndPrice list) =
                 bank
                 |> GuildWars.fetchPricedItems output GuildWars.BulkMode.Single
 
@@ -66,16 +64,9 @@ module Bank =
 
             do!
                 wallet
-                |> BankEncoder.encodeCurrencies config.GoogleSheets.SpreadsheetId (TabName "Bank") { Letter = "J"; Number = 2 }
+                |> BankEncoder.encodeCurrencies config.GoogleSheets.SpreadsheetId (TabName "Bank") { Letter = "I"; Number = 2 }
                 |> GoogleSheets.updateSheets log config.GoogleSheets
 
-            return "Done"
+            return ExitCode.Success
         }
-        |> Async.RunSynchronously
-        |> function
-            | Ok message ->
-                output.Success message
-                ExitCode.Success
-            | Error e ->
-                e |> List.iter output.Error
-                ExitCode.Error
+        |> AsyncResult.mapError ConsoleApplicationError.stringErrors

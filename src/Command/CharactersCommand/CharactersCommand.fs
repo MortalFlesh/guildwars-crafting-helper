@@ -25,7 +25,12 @@ module Characters =
         let letterMove = GoogleSheets.letterMoveBy CharacterLength i
 
         output.Message <| sprintf "Waiting for %s to start ..." (character.Name |> CharacterName.value)
-        do! AsyncResult.sleep (30 * 1000)
+
+        let waitingToStart = output.ProgressStart "Waiting ..." 30
+        for i in 0 .. 30 do
+            do! AsyncResult.sleep 1000
+            waitingToStart |> output.ProgressAdvance
+        waitingToStart |> output.ProgressFinish
 
         GoogleSheets.clear config tabName ("B3" |> rangeMove) ("D18" |> rangeMove)
         GoogleSheets.clear config tabName ("A22" |> rangeMove) ("D150" |> rangeMove)
@@ -52,16 +57,14 @@ module Characters =
             |> GoogleSheets.updateSheets log config
     }
 
-    let execute: ExecuteCommand = fun (input, output) ->
+    let execute = ExecuteAsyncResult <| fun (input, output) ->
         asyncResult {
             output.Title "Characters inspection"
 
-            let! config =
-                Config.get (input, output)
-                |> AsyncResult.ofResult
+            let! config = Config.get (input, output)
 
             let onlyCharacters =
-                input |> Input.getArgumentValueAsList "characters"
+                input |> Input.Argument.asList "characters"
 
             output.Section "Fetching character names"
             let! characterNames =
@@ -79,7 +82,7 @@ module Characters =
                 |> output.Options "Character names"
 
             output.Section "Fetching Characters data"
-            let! characters =
+            let! (characters: Character list) =
                 selectedCharacterNames
                 |> List.map (GuildWars.fetchCharacter output config.ApiKey GuildWars.BulkMode.Single)
                 |> AsyncResult.ofSequentialAsyncResults (sprintf "Fetching character detail failed: %A" >> List.singleton)
@@ -102,13 +105,6 @@ module Characters =
                 |> AsyncResult.ofSequentialAsyncResults (sprintf "Updating sheets failed: %A")
                 |> AsyncResult.ignore
 
-            return "Done"
+            return ExitCode.Success
         }
-        |> Async.RunSynchronously
-        |> function
-            | Ok message ->
-                output.Success message
-                ExitCode.Success
-            | Error e ->
-                e |> List.iter output.Error
-                ExitCode.Error
+        |> AsyncResult.mapError ConsoleApplicationError.stringErrors
