@@ -68,13 +68,13 @@ module AsyncResult =
     let sequenceM (results: AsyncResult<'Success, 'Error> list): AsyncResult<'Success list, 'Error> =
         let (<*>) = applyM
         let (<!>) = map
-        let cons head tail = head::tail
+        let cons head tail = head :: tail
         let consR headR tailR = cons <!> headR <*> tailR
         let initialValue = retn [] // empty list inside Result
 
         // loop through the list, prepending each element
         // to the initial value
-        List.foldBack consR results  initialValue
+        List.foldBack consR results initialValue
 
     let tee (f: 'Success -> unit) (xAsyncResult: AsyncResult<'Success, 'Error>): AsyncResult<'Success, 'Error> = async {
         let! xResult = xAsyncResult
@@ -97,7 +97,7 @@ module AsyncResult =
 
         // loop through the list, prepending each element
         // to the initial value
-        List.foldBack consR results  initialValue
+        List.foldBack consR results initialValue
 
     //-----------------------------------
     // Converting between AsyncResults and other types
@@ -138,6 +138,18 @@ module AsyncResult =
     let ofEmptyTaskCatch (f: exn -> 'Error) (x: Task): AsyncResult<unit, 'Error> =
         x |> ofEmptyTask |> catch f
 
+    /// Lift an Option into an AsyncResult
+    let ofOption (onMissing: 'Error): Option<'Success> -> AsyncResult<'Success, 'Error> = function
+        | Some v -> ofSuccess v
+        | _ -> ofError onMissing
+
+    /// Lift an async Option into an AsyncResult
+    let ofAsyncOption (onMissing: 'Error) (aO: Async<Option<'Success>>): AsyncResult<'Success, 'Error> =
+        aO |> ofAsyncCatch (fun _ -> onMissing) |> bind (ofOption onMissing)
+
+    let ofBool (onFalse: 'Error) (b: bool): AsyncResult<unit, 'Error> =
+        if b then ofSuccess () else ofError onFalse
+
     /// Run asyncResults in Parallel, handles the errors and concats results
     let ofParallelAsyncResults<'Success, 'Error> (f: exn -> 'Error) (results: AsyncResult<'Success, 'Error> list): AsyncResult<'Success list, 'Error list> =
         results
@@ -157,6 +169,26 @@ module AsyncResult =
         |> Async.Parallel
         |> ofAsyncCatch (f >> List.singleton)
         |> map Seq.toList
+
+    /// Run asyncs in limitted Parallel, handles the errors and concats results
+    let ofMaxParallelAsyncs<'Success, 'Error> maxParallel (f: exn -> 'Error) (asyncs: Async<'Success> list): AsyncResult<'Success list, 'Error list> =
+        asyncs
+        |> fun xA -> Async.Parallel(xA, maxParallel)
+        |> ofAsyncCatch (f >> List.singleton)
+        |> map Seq.toList
+
+    /// Run asyncResults in limitted Parallel, handles the errors and concats results
+    let ofMaxParallelAsyncResults<'Success, 'Error> maxParallel (f: exn -> 'Error) (results: AsyncResult<'Success, 'Error> list): AsyncResult<'Success list, 'Error list> =
+        results
+        |> List.map (mapError List.singleton)
+        |> fun xA -> Async.Parallel(xA, maxParallel)
+        |> ofAsyncCatch (f >> List.singleton)
+        |> bind (
+            Seq.toList
+            >> Validation.ofResults
+            >> Result.mapError List.concat
+            >> ofResult
+        )
 
     /// Run asyncResults in Parallel, handles the errors and concats results
     let ofSequentialAsyncResults<'Success, 'Error> (f: exn -> 'Error) (results: AsyncResult<'Success, 'Error> list): AsyncResult<'Success list, 'Error list> =
@@ -233,6 +265,7 @@ module AsyncResult =
 
 /// The `asyncResult` computation expression is available globally without qualification
 /// See https://github.com/cmeeren/Cvdm.ErrorHandling/blob/master/src/Cvdm.ErrorHandling/AsyncResultBuilder.fs
+/// See https://github.com/demystifyfp/FsToolkit.ErrorHandling/blob/master/src/FsToolkit.ErrorHandling/AsyncResultCE.fs
 [<AutoOpen>]
 module AsyncResultComputationExpression =
     type AsyncResultBuilder() =
@@ -272,4 +305,66 @@ module AsyncResultComputationExpression =
                 this.While(enum.MoveNext,
                     this.Delay(fun () -> binder enum.Current)))
 
+    [<AutoOpen>]
+    module AsyncExtensions =
+
+        // Having Async<_> members as extensions gives them lower priority in
+        // overload resolution between Async<_> and Async<Result<_,_>>.
+        type AsyncResultBuilder with
+            member __.ReturnFrom (async: Async<'Success>) : AsyncResult<'Success, exn> =
+                async |> AsyncResult.ofAsyncCatch id
+
+            member __.ReturnFrom (task: Task<'Success>) : AsyncResult<'Success, exn> =
+                task |> AsyncResult.ofTaskCatch id
+
+            member __.ReturnFrom (task: Task) : AsyncResult<unit, exn> =
+                task |> AsyncResult.ofEmptyTaskCatch id
+
+            member this.Bind(async: Async<'SuccessA>, f: 'SuccessA -> AsyncResult<'SuccessB, exn>): AsyncResult<'SuccessB, exn> =
+                this.Bind (async |> AsyncResult.ofAsyncCatch id, f)
+
+            member this.Bind(task: Task<'SuccessA>, f: 'SuccessA -> AsyncResult<'SuccessB, exn>): AsyncResult<'SuccessB, exn> =
+                this.Bind (task |> AsyncResult.ofTaskCatch id, f)
+
+            member this.Bind(task: Task, f: unit -> AsyncResult<'Success, exn>): AsyncResult<'Success, exn> =
+                this.Bind (task |> AsyncResult.ofEmptyTaskCatch id, f)
+
+    [<AutoOpen>]
+    module ResultExtensions =
+
+        // Having Result<_> members as extensions gives them lower priority in
+        // overload resolution between Result<_> and Async<Result<_,_>>.
+        type AsyncResultBuilder with
+            member __.ReturnFrom (result: Result<'Success, 'Error>) : AsyncResult<'Success, 'Error> =
+                result |> AsyncResult.ofResult
+
+            member this.Bind(result: Result<'SuccessA, 'Error>, f: 'SuccessA -> AsyncResult<'SuccessB, 'Error>): AsyncResult<'SuccessB, 'Error> =
+                this.Bind (result |> AsyncResult.ofResult, f)
+
     let asyncResult = AsyncResultBuilder()
+
+[<AutoOpen>]
+module AsyncResultExtension =
+
+    [<RequireQualifiedAccess>]
+    module AsyncResult =
+        let rec retryWith log waitMs attempts xA =
+            if attempts > 0 then
+                xA
+                |> AsyncResult.bindError (fun _ -> asyncResult {
+                    log <| sprintf "Retrying [%A] ..." attempts
+                    do! AsyncResult.sleep waitMs
+                    return! xA
+                })
+                |> retryWith log waitMs (attempts - 1)
+            else xA
+
+        let rec retry waitMs attempts xA =
+            if attempts > 0 then
+                xA
+                |> AsyncResult.bindError (fun _ -> asyncResult {
+                    do! AsyncResult.sleep waitMs
+                    return! xA
+                })
+                |> retry waitMs (attempts - 1)
+            else xA

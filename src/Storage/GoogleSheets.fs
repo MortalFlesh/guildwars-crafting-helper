@@ -57,7 +57,7 @@ module GoogleSheets =
         use stream = File.OpenRead(config.Credentials)
         let credentials =
             GoogleWebAuthorizationBroker.AuthorizeAsync(
-                GoogleClientSecrets.Load(stream).Secrets,
+                GoogleClientSecrets.FromStream(stream).Secrets,
                 scopes,
                 "user",
                 CancellationToken.None,
@@ -184,7 +184,7 @@ module GoogleSheets =
                 |> Seq.choose parse
                 |> Seq.toList
 
-        with e ->   
+        with e ->
             e |> logError "Load"
             []
 

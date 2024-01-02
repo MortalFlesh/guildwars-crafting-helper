@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <PackageId>MF.GuildWarsConsole</PackageId>
     <Description>Console application for help a crafting process in Guild Wars 2</Description>
     <Version>1.1.0</Version>

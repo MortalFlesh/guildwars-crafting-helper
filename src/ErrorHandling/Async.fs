@@ -30,3 +30,9 @@ module Async =
 
     /// Apply a monadic function to an Async value
     let bind (f: 'a -> Async<'b>) (xA: Async<'a>): Async<'b> = async.Bind(xA, f)
+
+    let tee (f: 'a -> unit) (xA: Async<'a>): Async<'a> = async {
+        let! x = xA
+        f x
+        return x
+    }

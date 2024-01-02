@@ -28,7 +28,6 @@ module Option =
         | null -> None // CLR null
         | :? Nullable<'a> as n when not n.HasValue -> None // CLR struct
         | :? Nullable<'a> as n when n.HasValue -> Some (n.Value) // CLR struct
-        | x when x.Equals (DBNull.Value) -> None // useful when reading from the db into F#
         | x -> Some (unbox x) // anything else
 
     let toNullable: 'a option -> Nullable<'a> = function

@@ -21,25 +21,33 @@ module Checklist =
         |> Seq.distinct
         |> List.ofSeq
 
+    type private FetchAllResponse = {
+        Items: Inventory
+        Wallet: Wallet
+        KnownRecipes: int list
+        ItemPrices: Map<int, float>
+    }
+
     let private fetchAll (output: MF.ConsoleApplication.Output) itemsCache currencyCache idsCache pricesCache apiKey idsToPrice = asyncResult {
         output.SubTitle "Fetching bank ..."
-        let! bankItems =
+        let! (bankItems: Inventory) =
             GuildWars.fetchBank apiKey
             |> Cache.fetchWithCache output itemsCache "bank"
 
         output.SubTitle "Fetching inventories ..."
-        let! inventoryItems =
+        let! (inventoryItems: Inventory) =
             GuildWars.fetchCharactersInventories apiKey
             |> Cache.fetchWithCache output itemsCache "characters"
 
         output.SubTitle "Fetching trading post delivery ..."
-        let! deliveredItems =
+        let! (deliveredItems: Inventory) =
             GuildWars.fetchTradingPostDelivery apiKey <@> List.singleton
             |> Cache.fetchWithCache output itemsCache "trading-post"
+
         let items = bankItems @ inventoryItems @ deliveredItems
 
         output.SubTitle "Fetching wallet ..."
-        let! currencies =
+        let! (currencies: Wallet) =
             GuildWars.fetchWallet apiKey <@> List.singleton
             |> Cache.fetchWithCache output currencyCache "wallet"
 
@@ -54,7 +62,12 @@ module Checklist =
             |> GuildWars.fetchItemPrices <@> List.singleton
             |> Cache.fetchWithCache output pricesCache (sprintf "item-prices-%A" idsToPrice)
 
-        return (items, currencies, knownRecipes, itemPrices)
+        return {
+            Items = items
+            Wallet = currencies
+            KnownRecipes = knownRecipes
+            ItemPrices = itemPrices
+        }
     }
 
     let private countItem countItemsById = function
@@ -120,7 +133,7 @@ module Checklist =
             checklist.Price
             |> collectIdsToPrice
 
-        let! items, currencies, knownRecipes, itemPrices =
+        let! { Items = items; Wallet = currencies; KnownRecipes = knownRecipes; ItemPrices = itemPrices } =
             idsToPrice
             |> fetchAll output itemsCache currencyCache idsCache pricesCache apiKey
 

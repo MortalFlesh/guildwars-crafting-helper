@@ -70,8 +70,8 @@ module Check =
             |> List.map format
             |> output.List
 
-    let execute: ExecuteCommand = fun (input, output) ->
-        result {
+    let execute = ExecuteAsyncResult <| fun (input, output) ->
+        asyncResult {
             output.Title "Check items"
 
             let log checklist = {
@@ -90,19 +90,23 @@ module Check =
             let idsCache = Cache.create()
             let pricesCache = Cache.create()
 
-            let! checklists =
+            let! parsed =
                 input
-                |> Input.getArgumentValueAsList "checklist"
-                |> List.map (ChecklistParser.parse >> Checklist.prepareChecklist output itemsCache currencyCache idsCache pricesCache config.ApiKey)
-                |> Async.Sequential
-                |> Async.RunSynchronously
-                |> Seq.toList
+                |> Input.Argument.asList "checklist"
+                |> List.map ChecklistParser.parse
                 |> Validation.ofResults
-                |> Result.mapError List.concat
+
+            let! (checklists: PreparedChecklist list) =
+                parsed
+                |> List.map (Checklist.prepareChecklist output itemsCache currencyCache idsCache pricesCache config.ApiKey)
+                |> AsyncResult.ofSequentialAsyncResults (sprintf "%A" >> List.singleton)
+                |> AsyncResult.mapError List.concat
 
             do!
                 checklists
                 |> List.map (fun checklist -> asyncResult {
+                    do! AsyncResult.sleep (30 * 1000)
+
                     let log =
                         let (TabName name) = checklist.TabName
                         log name
@@ -140,16 +144,10 @@ module Check =
                         encodedCheckList
                         |> GoogleSheets.updateSheets logSheets config.GoogleSheets
                 })
-                |> AsyncResult.ofSequentialAsyncResults (sprintf "%A")
+                |> AsyncResult.ofSequentialAsyncResults (sprintf "%A" >> List.singleton)
+                |> AsyncResult.mapError List.concat
                 |> AsyncResult.map ignore
-                |> Async.RunSynchronously
 
-            return "Done"
+            return ExitCode.Success
         }
-        |> function
-            | Ok message ->
-                output.Success message
-                ExitCode.Success
-            | Error e ->
-                e |> List.iter output.Error
-                ExitCode.Error
+        |> AsyncResult.mapError ConsoleApplicationError.stringErrors
