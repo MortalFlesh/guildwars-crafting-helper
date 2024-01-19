@@ -476,15 +476,26 @@ module GuildWars =
 
         let bags =
             bagsData
-            |> List.map (fun bag ->
-                {
-                    Info = bagsItemsInfo.[bag.Id]
-                    Size = bag.Size
-                    Inventory =
-                        bag.Inventory
-                        |> Seq.map (fun item -> bagsItemsInfo.[item.Id])
-                        |> Seq.toList
-                }
+            |> List.choose (fun bag ->
+                match bagsItemsInfo |> Map.tryFind bag.Id with
+                | Some bagInfo ->
+                    Some {
+                        Info = bagInfo
+                        Size = bag.Size
+                        Inventory =
+                            bag.Inventory
+                            |> Seq.choose (fun item ->
+                                match bagsItemsInfo |> Map.tryFind item.Id with
+                                | Some info -> Some info
+                                | _ ->
+                                    output.Warning("Item info for %A not found. Try %A", bag.Id, (fetchItemsUrl [item.Id]))
+                                    None
+                            )
+                            |> Seq.toList
+                    }
+                | _ ->
+                    output.Warning("Item info for %A not found. Try %A", bag.Id, (fetchItemsUrl [bag.Id]))
+                    None
             )
 
         let equipmentInfo =
